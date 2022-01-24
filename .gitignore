@@ -1,0 +1,10 @@
+**/node_modules/
+**/dist/
+**/.next/
+**/.env
+**/yarn-error.log
+**/yarn-debug.log
+**/.env.development
+**/.env.test
+**/.env.production
+**/.vscode

@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id        Int        @id @default(autoincrement())
+  title     String     @db.VarChar(255)
+  content   String
+  published Boolean    @default(false)
+  authorId  Int
+  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  pictureId Int
+  picture   PostUpload @relation(fields: [pictureId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  slug      String     @unique @db.VarChar(255)
+
+  @@map("posts")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique @db.VarChar(255)
+  password String @db.VarChar(255)
+  name     String @db.VarChar(255)
+  posts    Post[]
+  role     Role
+
+  @@map("users")
+}
+
+model PostUpload {
+  id        Int      @id @default(autoincrement())
+  fileName  String   @db.VarChar(255)
+  fileType  String   @db.VarChar(255)
+  fileSize  Int
+  filePath  String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  posts     Post[]
+
+  @@map("post_uploads")
+}
+
+enum Role {
+  ADMIN
+  USER
+}

@@ -1,0 +1,189 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Auth {
+  """JWT access token"""
+  accessToken: String!
+
+  """JWT refresh token"""
+  refreshToken: String!
+  user: User!
+}
+
+input CreatePostInput {
+  content: String!
+  pictureId: Int!
+  title: String!
+}
+
+input LoginInput {
+  """User email"""
+  email: String!
+
+  """User password"""
+  password: String!
+}
+
+type Mutation {
+  """Create a new post"""
+  createPost(details: CreatePostInput!): Post!
+
+  """Delete a post"""
+  deletePost(id: Int!): Int!
+  logIn(loginDetails: LoginInput!): Auth!
+  refreshToken: Token!
+  signUp(signupDetails: SignUpInput!): Auth!
+
+  """Update a post"""
+  updatePost(details: UpdatePostInput!, id: Int!): Post!
+  uploadFile(file: Upload!): PostUpload!
+}
+
+type PaginatedPost {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  nodes: [Post!]
+  totalCount: Int!
+  totalPages: Int!
+}
+
+type Post {
+  """The author of the post"""
+  author: User!
+
+  """The unique identifier of the author of the post"""
+  authorId: Int!
+
+  """Post's content"""
+  content: String!
+
+  """Post's creation date"""
+  createdAt: Timestamp!
+
+  """The unique identifier of the post"""
+  id: Int!
+
+  """The picture of the post"""
+  picture: PostUpload!
+
+  """The unique identifier of the picture of the post"""
+  pictureId: Int!
+
+  """Is post published?"""
+  published: Boolean!
+
+  """Post's slug"""
+  slug: String!
+
+  """Post's title"""
+  title: String!
+
+  """Post's last update date"""
+  updatedAt: Timestamp!
+}
+
+type PostUpload {
+  """Picture's creation date"""
+  createdAt: Timestamp!
+
+  """Picture's file name"""
+  fileName: String!
+
+  """Path to the picture"""
+  filePath: String!
+
+  """Picture's file size"""
+  fileSize: Int!
+
+  """Picture's file type"""
+  fileType: String!
+
+  """The unique identifier of the picture"""
+  id: Int!
+}
+
+type Query {
+  """Get all posts"""
+  allPosts(
+    """Current page"""
+    limit: Int = 10
+
+    """Current page"""
+    page: Int!
+  ): PaginatedPost!
+
+  """Get a post by id or slug"""
+  post(
+    """ID of the post"""
+    id: Int
+
+    """Slug of the post"""
+    slug: String
+  ): Post!
+
+  """Get all published posts"""
+  publishedPosts(
+    """Current page"""
+    limit: Int = 10
+
+    """Current page"""
+    page: Int!
+  ): PaginatedPost!
+}
+
+"""User role"""
+enum Role {
+  ADMIN
+  USER
+}
+
+input SignUpInput {
+  """User email"""
+  email: String!
+
+  """User name"""
+  name: String!
+
+  """User password"""
+  password: String!
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+type Token {
+  """JWT access token"""
+  accessToken: String!
+
+  """JWT refresh token"""
+  refreshToken: String!
+}
+
+input UpdatePostInput {
+  content: String!
+  pictureId: Int!
+  title: String!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+type User {
+  """User's email"""
+  email: String!
+
+  """The unique identifier of the user"""
+  id: Int!
+
+  """User's name"""
+  name: String!
+
+  """User's posts"""
+  posts: [Post!]!
+
+  """User's role"""
+  role: Role!
+}
