@@ -1,4 +1,4 @@
-import { PostUploadModule } from './../post-upload/post-upload.module';
+import { UploadModule } from './../upload/upload.module';
 import { AuthModule } from './../auth/auth.module';
 import { UserModule } from './../user/user.module';
 import { PostModule } from './../post/post.module';
@@ -26,7 +26,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
     }),
     AuthModule,
     PostModule,
-    PostUploadModule,
+    UploadModule,
     UserModule,
   ],
   controllers: [],

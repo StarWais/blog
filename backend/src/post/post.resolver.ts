@@ -1,5 +1,5 @@
-import { PostUploadService } from './../post-upload/post-upload.service';
-import { PostUpload } from './../post-upload/models/post-upload.model';
+import { UploadService } from './../upload/upload.service';
+import { FileUpload } from './../upload/models/upload.model';
 import { RolesGuard } from './../guards/roles.guard';
 import { GqlAuthGuard } from './../guards/gql-auth.guard';
 import { PaginationArgs } from './../common/pagination/pagination.args';
@@ -31,7 +31,7 @@ export class PostResolver {
   constructor(
     private readonly postService: PostService,
     private readonly userService: UserService,
-    private readonly postUploadService: PostUploadService,
+    private readonly uploadService: UploadService,
   ) {}
 
   @Query(() => Post, { description: 'Get a post by id or slug' })
@@ -99,10 +99,10 @@ export class PostResolver {
     const user = await this.userService.getUserById(authorId);
     return user;
   }
-  @ResolveField('picture', () => PostUpload)
+  @ResolveField('picture', () => FileUpload)
   async picture(@Parent() post: Post) {
     const { pictureId } = post;
-    const picture = await this.postUploadService.getFileById(pictureId);
+    const picture = await this.uploadService.getPostPictureById(pictureId);
     return picture;
   }
 }

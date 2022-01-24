@@ -1,4 +1,4 @@
-import { PostUploadService } from './../post-upload/post-upload.service';
+import { UploadService } from './../upload/upload.service';
 import { User } from './../user/models/user.model';
 import { PaginationArgs } from './../common/pagination/pagination.args';
 import { UpdatePostInput } from './dto/inputs/update-post-input';
@@ -17,7 +17,7 @@ import { PostRepository } from './post.repository';
 export class PostService {
   constructor(
     private readonly postRepository: PostRepository,
-    private readonly postUploadService: PostUploadService,
+    private readonly uploadService: UploadService,
   ) {}
 
   private generateSlug = (title: string) =>
@@ -63,7 +63,9 @@ export class PostService {
     });
   }
   async createPost(details: CreatePostInput, currentUser: User) {
-    const picture = await this.postUploadService.getFileById(details.pictureId);
+    const picture = await this.uploadService.getPostPictureById(
+      details.pictureId,
+    );
     return this.postRepository.createPost({
       title: details.title,
       content: details.content,

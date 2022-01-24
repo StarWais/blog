@@ -1,13 +1,13 @@
+import { UploadRepository } from './upload.repository';
 import { FileUpload } from 'graphql-upload';
-import { PostUploadRepository } from './post-upload.repository';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import * as Sharp from 'sharp';
 import { uuid } from 'uuidv4';
 import { join } from 'path';
 
 @Injectable()
-export class PostUploadService {
-  constructor(private readonly postUploadRepository: PostUploadRepository) {}
+export class UploadService {
+  constructor(private readonly uploadRepository: UploadRepository) {}
 
   private streamToString = (stream) => {
     const chunks = [];
@@ -17,15 +17,15 @@ export class PostUploadService {
       stream.on('end', () => resolve(Buffer.concat(chunks)));
     });
   };
-  async createFile(fileDetails: FileUpload) {
-    const { createReadStream, filename } = fileDetails;
+  async createPostPicture(fileDetails: FileUpload) {
+    const { createReadStream } = fileDetails;
     const image = await this.streamToString(createReadStream());
     const sharpImage = Sharp(image);
     const pictureuuid = uuid();
     const newFileName = `${pictureuuid}.avif`;
     const newFilePath = join(process.cwd(), 'src/public/uploads', newFileName);
     const newFileInfo = await sharpImage.avif().toFile(newFilePath);
-    return this.postUploadRepository.createFile({
+    return this.uploadRepository.createFile({
       fileName: pictureuuid,
       fileType: 'avif',
       fileSize: newFileInfo.size,
@@ -33,8 +33,8 @@ export class PostUploadService {
     });
   }
 
-  async getFileById(id: number) {
-    const file = await this.postUploadRepository.getFileById(id);
+  async getPostPictureById(id: number) {
+    const file = await this.uploadRepository.getFileById(id);
     if (!file) {
       throw new NotFoundException(`File with id ${id} not found`);
     }

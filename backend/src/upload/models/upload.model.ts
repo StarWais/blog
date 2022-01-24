@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class PostUpload {
+export class FileUpload {
   @Field(() => Int, { description: 'The unique identifier of the picture' })
   id: number;
   @Field({ description: "Picture's file name" })

@@ -1,4 +1,4 @@
-import { PostUpload } from './../../post-upload/models/post-upload.model';
+import { FileUpload } from './../../upload/models/upload.model';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { User } from 'src/user/models/user.model';
 
@@ -28,6 +28,6 @@ export class Post {
   pictureId: number;
   @Field(() => User, { description: 'The author of the post' })
   author: User;
-  @Field(() => PostUpload, { description: 'The picture of the post' })
-  picture: PostUpload;
+  @Field(() => FileUpload, { description: 'The picture of the post' })
+  picture: FileUpload;
 }

@@ -17,6 +17,26 @@ input CreatePostInput {
   title: String!
 }
 
+type FileUpload {
+  """Picture's creation date"""
+  createdAt: Timestamp!
+
+  """Picture's file name"""
+  fileName: String!
+
+  """Path to the picture"""
+  filePath: String!
+
+  """Picture's file size"""
+  fileSize: Int!
+
+  """Picture's file type"""
+  fileType: String!
+
+  """The unique identifier of the picture"""
+  id: Int!
+}
+
 input LoginInput {
   """User email"""
   email: String!
@@ -37,7 +57,7 @@ type Mutation {
 
   """Update a post"""
   updatePost(details: UpdatePostInput!, id: Int!): Post!
-  uploadFile(file: Upload!): PostUpload!
+  uploadFile(file: Upload!): FileUpload!
 }
 
 type PaginatedPost {
@@ -65,7 +85,7 @@ type Post {
   id: Int!
 
   """The picture of the post"""
-  picture: PostUpload!
+  picture: FileUpload!
 
   """The unique identifier of the picture of the post"""
   pictureId: Int!
@@ -81,26 +101,6 @@ type Post {
 
   """Post's last update date"""
   updatedAt: Timestamp!
-}
-
-type PostUpload {
-  """Picture's creation date"""
-  createdAt: Timestamp!
-
-  """Picture's file name"""
-  fileName: String!
-
-  """Path to the picture"""
-  filePath: String!
-
-  """Picture's file size"""
-  fileSize: Int!
-
-  """Picture's file type"""
-  fileType: String!
-
-  """The unique identifier of the picture"""
-  id: Int!
 }
 
 type Query {
