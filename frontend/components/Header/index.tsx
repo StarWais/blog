@@ -6,27 +6,30 @@ import Search from './Search';
 
 const Header = () => {
   return (
-    <Flex
+    <Box
       as="header"
-      align="center"
-      justify="space-between"
+      position="sticky"
+      top={0}
+      bg="white"
+      left={0}
+      zIndex={1}
       py={4}
       px={{
         base: 4,
         xl: 0,
       }}
-      maxW="8xl"
-      mx="auto"
     >
-      <NextLink href="/" fontSize="2xl" fontWeight="bold">
-        HotCoffee
-      </NextLink>
-      <Search />
-      <HStack as="nav" spacing={8}>
-        <NavLink href="/">Home</NavLink>
-        <NavLink href="/articles">Articles</NavLink>
-      </HStack>
-    </Flex>
+      <Flex align="center" justify="space-between" maxW="8xl" mx="auto">
+        <NextLink href="/" fontSize="2xl" fontWeight="bold">
+          HotCoffee
+        </NextLink>
+        <Search />
+        <HStack as="nav" spacing={8}>
+          <NavLink href="/">Home</NavLink>
+          <NavLink href="/articles">Articles</NavLink>
+        </HStack>
+      </Flex>
+    </Box>
   );
 };
 

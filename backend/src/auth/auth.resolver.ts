@@ -27,7 +27,9 @@ export class AuthResolver {
     return this.authService.login(loginDetails);
   }
   @Mutation(() => Token)
-  async refreshToken(@Args() { token }: RefreshTokenInput) {
+  async refreshToken(
+    @Args('refreshTokenDetails') { token }: RefreshTokenInput,
+  ) {
     return this.authService.refreshToken(token);
   }
   @ResolveField('user')

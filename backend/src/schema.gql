@@ -52,7 +52,7 @@ type Mutation {
   """Delete a post"""
   deletePost(id: Int!): Int!
   logIn(loginDetails: LoginInput!): Auth!
-  refreshToken: Token!
+  refreshToken(refreshTokenDetails: RefreshTokenInput!): Token!
   signUp(signupDetails: SignUpInput!): Auth!
 
   """Update a post"""
@@ -60,12 +60,17 @@ type Mutation {
   uploadFile(file: Upload!): FileUpload!
 }
 
-type PaginatedPost {
+type PageInfo {
+  currentPage: Int!
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
-  nodes: [Post!]
   totalCount: Int!
   totalPages: Int!
+}
+
+type PaginatedPost {
+  nodes: [Post!]
+  pageInfo: PageInfo!
 }
 
 type Post {
@@ -112,6 +117,7 @@ type Query {
     """Current page"""
     page: Int!
   ): PaginatedPost!
+  getMe: User!
 
   """Get a post by id or slug"""
   post(
@@ -130,6 +136,11 @@ type Query {
     """Current page"""
     page: Int!
   ): PaginatedPost!
+}
+
+input RefreshTokenInput {
+  """Refresh token"""
+  token: String!
 }
 
 """User role"""

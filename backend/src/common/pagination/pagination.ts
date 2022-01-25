@@ -5,9 +5,28 @@ import { PrismaService } from 'src/prisma.service';
 
 export interface IPaginatedType<T> {
   nodes: T[];
+  pageInfo: PageInfo;
+}
+
+export interface IPageInfo {
   totalPages: number;
   totalCount: number;
   hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  currentPage: number;
+}
+
+@ObjectType({ isAbstract: true })
+abstract class PageInfo implements IPageInfo {
+  @Field(() => Int)
+  totalPages: number;
+  @Field(() => Int)
+  currentPage: number;
+  @Field(() => Int)
+  totalCount: number;
+  @Field(() => Boolean)
+  hasNextPage: boolean;
+  @Field(() => Boolean)
   hasPreviousPage: boolean;
 }
 
@@ -16,14 +35,8 @@ export function Paginated<T>(classRef: Type<T>): Type<IPaginatedType<T>> {
   abstract class PaginatedType implements IPaginatedType<T> {
     @Field(() => [classRef], { nullable: true })
     nodes: Array<T>;
-    @Field(() => Int)
-    totalPages: number;
-    @Field()
-    hasPreviousPage: boolean;
-    @Field(() => Int)
-    totalCount: number;
-    @Field()
-    hasNextPage: boolean;
+    @Field(() => PageInfo)
+    pageInfo: PageInfo;
   }
   return PaginatedType as Type<IPaginatedType<T>>;
 }
@@ -50,9 +63,12 @@ export async function Paginate<T>(
 
   return {
     nodes: results,
-    totalPages,
-    totalCount,
-    hasNextPage,
-    hasPreviousPage,
+    pageInfo: {
+      totalPages,
+      totalCount,
+      currentPage: paginationArgs.page,
+      hasNextPage,
+      hasPreviousPage,
+    },
   };
 }

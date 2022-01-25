@@ -19,10 +19,14 @@ import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
       buildSchemaOptions: {
         dateScalarMode: 'timestamp',
       },
+      cors: {
+        origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
+        credentials: true,
+      },
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), 'public'),
-      renderPath: '/uploads',
+      rootPath: join(process.cwd(), '..', '/uploads'),
+      serveRoot: '/uploads/',
     }),
     AuthModule,
     PostModule,

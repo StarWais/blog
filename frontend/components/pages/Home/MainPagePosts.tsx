@@ -1,4 +1,4 @@
-import { Container, HStack, SimpleGrid, VStack } from '@chakra-ui/react';
+import { Container, SimpleGrid, VStack } from '@chakra-ui/react';
 import { FC } from 'react';
 import { Post as IPost } from '../../../types/Post';
 import Post from '../../Post';
@@ -14,7 +14,7 @@ const MainPagePosts: FC<PostsProps> = ({ posts }) => {
         <>
           <VStack spacing={10}>
             <Post type="large" post={posts[0]} />
-            <SimpleGrid columns={3} spacing={6}>
+            <SimpleGrid columns={3} spacing={6} w="full">
               {posts.slice(1, 4).map((post) => (
                 <Post key={post.id} type="normal" post={post} />
               ))}

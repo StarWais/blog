@@ -23,7 +23,7 @@ export class UploadService {
     const sharpImage = Sharp(image);
     const pictureuuid = uuid();
     const newFileName = `${pictureuuid}.avif`;
-    const newFilePath = join(process.cwd(), 'src/public/uploads', newFileName);
+    const newFilePath = join(process.cwd(), '..', '/uploads', newFileName);
     const newFileInfo = await sharpImage.avif().toFile(newFilePath);
     return this.uploadRepository.createFile({
       fileName: pictureuuid,

@@ -1,0 +1,8 @@
+div#__next {
+  min-height: 100vh;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: space-between;
+}

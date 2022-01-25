@@ -12,10 +12,15 @@ export interface Post {
   picture: Picture;
 }
 
-export interface PaginatedPosts {
-  nodes: Post[];
+export interface PageInfo {
   totalPages: number;
   totalCount: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
+  currentPage: number;
+}
+
+export interface PaginatedPosts {
+  nodes: Post[];
+  pageInfo: PageInfo;
 }
