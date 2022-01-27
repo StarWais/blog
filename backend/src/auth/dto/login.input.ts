@@ -6,6 +6,7 @@ export class LoginInput {
   @Field({ description: 'User email' })
   @IsNotEmpty()
   @IsEmail()
+  @Length(5, 255)
   email: string;
 
   @Field({ description: 'User password' })
