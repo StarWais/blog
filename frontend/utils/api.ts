@@ -107,6 +107,7 @@ class AuthInterceptor extends AbstractInterceptor {
   intercept(ctx: GQLContext): Promise<GQLContext> {
     if (typeof window !== 'undefined') {
       const token = window.localStorage.getItem('accessToken');
+
       if (!!token && token !== 'undefined') {
         ctx.req.headers = {
           ...ctx.req.headers,
@@ -129,13 +130,14 @@ const REFRESH_TOKEN = gql`
 
 class HandleRefreshToken extends AbstractInterceptor {
   async intercept(ctx: GQLContext): Promise<GQLContext> {
+    if (!ctx.res) {
+      throw 'Network error';
+    }
     if (!('errors' in ctx.res)) return await super.intercept(ctx);
     //@ts-ignore
-    const exception = ctx.res.errors[0]?.extensions?.exception;
-
+    const exception = ctx.res.errors[0]?.extensions?.response;
     if (!exception) return await super.intercept(ctx);
-
-    const Error = new GraphQLError(exception.message, exception.status);
+    const Error = new GraphQLError(exception.message, exception.statusCode);
     if (
       Error.code === 401 &&
       !ctx.isRepeated &&

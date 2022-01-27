@@ -1,6 +1,8 @@
 import { Box, Button, Container, Heading, SimpleGrid } from '@chakra-ui/react';
 import { NextPage } from 'next';
+import Head from 'next/head';
 import React from 'react';
+import _ from 'lodash';
 import Post from '../../components/Post';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { paginatePublishedPosts } from '../../redux/posts/post.thunks';
@@ -23,34 +25,39 @@ const Articles: NextPage<PageProps> = () => {
     );
   };
   return (
-    <Container maxW="8xl" mx="auto" mt={10}>
-      {posts.length > 0 ? (
-        <>
-          <SimpleGrid columns={3} spacing={6} w="full">
-            {posts.map((post) => (
-              <Post post={post} key={post.id} type="normal" />
-            ))}
-          </SimpleGrid>
-          {pageInfo.hasNextPage && (
-            <Box ml="auto" maxW="fit-content">
-              <Button
-                isLoading={isFetching}
-                onClick={handleFetchMore}
-                loadingText="Loading"
-                colorScheme="purple"
-                my={6}
-              >
-                See more
-              </Button>
-            </Box>
-          )}
-        </>
-      ) : (
-        <Heading as="h2" fontSize="2xl" textAlign="center">
-          There are no posts availiable
-        </Heading>
-      )}
-    </Container>
+    <>
+      <Head>
+        <title>Articles</title>
+      </Head>
+      <Container maxW="8xl" mx="auto" mt={10}>
+        {!_.isEmpty(posts) ? (
+          <>
+            <SimpleGrid columns={3} spacing={6} w="full">
+              {posts.map((post) => (
+                <Post post={post} key={post.id} type="normal" />
+              ))}
+            </SimpleGrid>
+            {pageInfo.hasNextPage && (
+              <Box ml="auto" maxW="fit-content">
+                <Button
+                  isLoading={isFetching}
+                  onClick={handleFetchMore}
+                  loadingText="Loading"
+                  colorScheme="purple"
+                  my={6}
+                >
+                  See more
+                </Button>
+              </Box>
+            )}
+          </>
+        ) : (
+          <Heading as="h2" fontSize="2xl" textAlign="center">
+            There are no posts availiable
+          </Heading>
+        )}
+      </Container>
+    </>
   );
 };
 export const getStaticProps = wrapper.getStaticProps(

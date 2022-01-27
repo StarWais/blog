@@ -1,4 +1,4 @@
-import { PaginatedPosts } from '../types/Post';
+import { PaginatedPosts, Post } from '../types/Post';
 import { gql } from 'graphql-request';
 import api from '../utils/api';
 
@@ -37,4 +37,45 @@ export const paginatePublishedPosts = async ({
   };
   const response = await api.request(query, variables);
   return response.publishedPosts as PaginatedPosts;
+};
+export const getPostBySlug = async (slug: string) => {
+  const query = gql`
+    query Post($slug: String) {
+      post(slug: $slug) {
+        author {
+          name
+        }
+        content
+        createdAt
+        picture {
+          filePath
+        }
+        title
+        updatedAt
+      }
+    }
+  `;
+  const variables = {
+    slug,
+  };
+  const response = await api.request(query, variables);
+  return response.post as Post;
+};
+export const getSlugs = async () => {
+  const query = gql`
+    query PublishedPosts($limit: Int, $page: Int!) {
+      publishedPosts(limit: $limit, page: $page) {
+        nodes {
+          slug
+        }
+      }
+    }
+  `;
+  const variables = {
+    page: 1,
+    limit: 100000000,
+  };
+  const response = await api.request(query, variables);
+  const publishedPosts = response.publishedPosts as PaginatedPosts;
+  return publishedPosts.nodes.map((post) => post.slug);
 };

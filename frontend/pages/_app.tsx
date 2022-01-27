@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }: AppProps<PageProps>) {
     <ChakraProvider>
       <AuthProvider>
         <Header />
-        <Box as="main">
+        <Box as="main" mb={8}>
           {Component.defaultProps?.requiresAuth ? (
             <AuthGuard admin={Component.defaultProps.admin || false}>
               <Component {...pageProps} />

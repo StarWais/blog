@@ -10,7 +10,7 @@ const Footer = () => {
       py={4}
       borderTopWidth="1px"
       borderTopColor="gray.200"
-      mt={8}
+      mt="auto"
       px={{
         base: 4,
         xl: 0,

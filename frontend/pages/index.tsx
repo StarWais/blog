@@ -1,4 +1,5 @@
 import type { NextPage } from 'next';
+import Head from 'next/head';
 import MainPagePosts from '../components/pages/Home/MainPagePosts';
 import TopContent from '../components/pages/Home/TopContent';
 import { useAppSelector } from '../hooks';
@@ -12,6 +13,9 @@ const Home: NextPage<PageProps> = () => {
 
   return (
     <>
+      <Head>
+        <title>HotCoffee</title>
+      </Head>
       <TopContent
         title="Make better coffee"
         description="why learn how to blog?"

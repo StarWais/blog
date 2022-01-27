@@ -1,5 +1,6 @@
 import { Box, HStack, VStack } from '@chakra-ui/react';
 import Moment from 'react-moment';
+import removeMd from 'remove-markdown';
 import { PostType } from '.';
 import NextLink from '../NextLink';
 
@@ -36,6 +37,7 @@ const PostContent = ({
     }
     return 5;
   };
+  const parsedContent = removeMd(content);
   return (
     <VStack
       align="start"
@@ -54,7 +56,9 @@ const PostContent = ({
           {title}
         </Box>
         <Box color="gray.500">
-          {content.length > 250 ? `${content.slice(0, 250)}...` : content}
+          {parsedContent.length > 250
+            ? `${parsedContent.slice(0, 250)}...`
+            : parsedContent}
         </Box>
       </VStack>
       <HStack justify="space-between" w="full">

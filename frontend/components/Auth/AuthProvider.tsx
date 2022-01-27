@@ -9,7 +9,7 @@ const AuthProvider: FC<any> = ({ children }) => {
       localStorage.getItem('accessToken') &&
       localStorage.getItem('refreshToken')
     ) {
-      dispatch(getMe);
+      dispatch(getMe());
     }
   }, []);
   return children;

@@ -2,10 +2,14 @@ import { gql } from 'graphql-request';
 import api from '../utils/api';
 import { User } from '../types/User';
 
-interface SignUpDetails {
+export interface SignUpDetails {
   email: string;
   password: string;
   name: string;
+}
+export interface LogInDetails {
+  email: string;
+  password: string;
 }
 
 export interface AuthResponse {
@@ -38,7 +42,7 @@ export const signUp = async ({ email, password, name }: SignUpDetails) => {
   const response = await api.request(query, variables);
   return response.signUp as AuthResponse;
 };
-export const logIn = async ({ email, password }: SignUpDetails) => {
+export const logIn = async ({ email, password }: LogInDetails) => {
   const query = gql`
     mutation LogIn($loginDetails: LoginInput!) {
       logIn(loginDetails: $loginDetails) {

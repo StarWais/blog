@@ -1,6 +1,7 @@
 import { Box, Flex, HStack } from '@chakra-ui/react';
 import React from 'react';
 import NextLink from '../NextLink';
+import HeaderAuth from './HeaderAuth';
 import NavLink from './NavLink';
 import Search from './Search';
 
@@ -27,6 +28,7 @@ const Header = () => {
         <HStack as="nav" spacing={8}>
           <NavLink href="/">Home</NavLink>
           <NavLink href="/articles">Articles</NavLink>
+          <HeaderAuth />
         </HStack>
       </Flex>
     </Box>
