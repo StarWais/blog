@@ -26,12 +26,23 @@ type Comment {
 
   """Comment id"""
   id: Int!
+  likes: [CommentLike!]!
 
   """Post id"""
   postId: Int!
 
   """Comment's last update date"""
   updatedAt: Timestamp!
+}
+
+type CommentLike {
+  author: User!
+  authorId: Int!
+  comment: Comment!
+  commentId: Int!
+
+  """Comment like id"""
+  id: Int!
 }
 
 """Create comment input"""
@@ -69,6 +80,11 @@ type FileUpload {
   id: Int!
 }
 
+input LikeCommentInput {
+  """Comment id"""
+  commentId: Int!
+}
+
 input LoginInput {
   """User email"""
   email: String!
@@ -85,8 +101,10 @@ type Mutation {
 
   """Delete a post"""
   deletePost(id: Int!): Int!
+  likeComment(details: LikeCommentInput!): CommentLike!
   logIn(loginDetails: LoginInput!): Auth!
   refreshToken(refreshTokenDetails: RefreshTokenInput!): Token!
+  replyToComment(details: ReplyToCommentInput!): Comment!
   signUp(signupDetails: SignUpInput!): Auth!
 
   """Update a post"""
@@ -179,6 +197,17 @@ type Query {
 input RefreshTokenInput {
   """Refresh token"""
   token: String!
+}
+
+input ReplyToCommentInput {
+  """The comment text"""
+  content: String!
+
+  """Post id"""
+  postId: Int!
+
+  """Reply to which post"""
+  replyTo: Int!
 }
 
 """User role"""

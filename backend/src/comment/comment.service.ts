@@ -1,3 +1,4 @@
+import { ReplyToCommentInput } from './dto/inputs/reply-to-comment.input';
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from './../prisma.service';
@@ -13,6 +14,18 @@ export class CommentService {
     return this.prisma.comment.create({
       data: {
         content,
+        post: { connect: { id: postId } },
+        author: { connect: { id: user.id } },
+      },
+    });
+  }
+
+  replyToComment(details: ReplyToCommentInput, user: User) {
+    const { postId, content, replyTo } = details;
+    return this.prisma.comment.create({
+      data: {
+        content,
+        replyTo,
         post: { connect: { id: postId } },
         author: { connect: { id: user.id } },
       },

@@ -29,7 +29,7 @@ const Articles: NextPage<PageProps> = () => {
       <Head>
         <title>Articles</title>
       </Head>
-      <Container maxW="8xl" mx="auto" mt={10}>
+      <Container maxW="8xl" mx="auto" mt={10} px={10}>
         {!_.isEmpty(posts) ? (
           <>
             <SimpleGrid columns={3} spacing={6} w="full">

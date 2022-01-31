@@ -1,3 +1,4 @@
+import { PostModule } from './../post/post.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { Module } from '@nestjs/common';
@@ -8,7 +9,6 @@ import { CommentModule } from './../comment/comment.module';
 import { UploadModule } from './../upload/upload.module';
 import { AuthModule } from './../auth/auth.module';
 import { UserModule } from './../user/user.module';
-import { PostModule } from './../post/post.module';
 
 @Module({
   imports: [

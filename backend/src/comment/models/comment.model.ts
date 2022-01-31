@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { User } from './../../user/models/user.model';
+import { CommentLike } from './comment-like.model';
 
 @ObjectType()
 export class Comment {
@@ -17,4 +18,6 @@ export class Comment {
   createdAt: Date;
   @Field({ description: "Comment's last update date" })
   updatedAt: Date;
+  @Field(() => [CommentLike])
+  likes: CommentLike[];
 }

@@ -9,7 +9,7 @@ interface PostsProps {
 
 const MainPagePosts: FC<PostsProps> = ({ posts }) => {
   return (
-    <Container maxW="8xl" mx="auto" mt={10}>
+    <Container maxW="8xl" mx="auto" mt={10} px={10}>
       {posts.length > 0 ? (
         <VStack spacing={10}>
           <Post type="large" post={posts[0]} />

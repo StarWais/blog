@@ -16,6 +16,7 @@ const TopContent = ({ title, description, imageLink }: TopContentProps) => (
         xl: 40,
         base: 10,
       }}
+      px={12}
     >
       <Stack
         justify="space-between"

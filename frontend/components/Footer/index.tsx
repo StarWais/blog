@@ -11,10 +11,7 @@ const Footer = () => {
       borderTopWidth="1px"
       borderTopColor="gray.200"
       mt="auto"
-      px={{
-        base: 4,
-        xl: 0,
-      }}
+      px={8}
     >
       <Flex align="center" justify="space-between" maxW="8xl" mx="auto">
         <Box>

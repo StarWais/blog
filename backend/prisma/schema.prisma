@@ -26,22 +26,23 @@ model Post {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique @db.VarChar(255)
-  password     String        @db.VarChar(255)
-  name         String        @db.VarChar(255)
-  posts        Post[]
-  role         Role          @default(USER)
-  pictureId    Int?
-  picture      UserAvatar?   @relation(fields: [pictureId], references: [id])
-  comments     Comment[]
-  commentLikes CommentLike[]
-  uploads      Upload[]
-  postLikes    PostLike[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id        Int         @id @default(autoincrement())
+  email     String      @unique @db.VarChar(255)
+  password  String      @db.VarChar(255)
+  name      String      @db.VarChar(255)
+  posts     Post[]
+  role      Role        @default(USER)
+  pictureId Int?
+  picture   UserAvatar? @relation(fields: [pictureId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("users")
+  Upload      Upload[]
+  Comment     Comment[]
+  CommentLike CommentLike[]
+  PostLike    PostLike[]
 }
 
 model Upload {

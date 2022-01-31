@@ -15,10 +15,7 @@ const Header = () => {
       left={0}
       zIndex={1}
       py={4}
-      px={{
-        base: 4,
-        xl: 0,
-      }}
+      px={8}
     >
       <Flex align="center" justify="space-between" maxW="8xl" mx="auto">
         <NextLink href="/" fontSize="2xl" fontWeight="bold">
