@@ -12,14 +12,15 @@ import NextLink from '../NextLink';
 import { useAppDispatch } from '../../hooks';
 import { logOut } from '../../redux/auth/auth.slice';
 import { Role, User } from '../../types/User.d';
+import { getUploadUrl } from '../../utils/helpers';
 
-const UserProfile = ({ name, role }: User) => {
+const UserProfile = ({ name, role, picture }: User) => {
   const dispatch = useAppDispatch();
   return (
     <Menu>
       <MenuButton>
         <HStack>
-          <Avatar name={name} size="sm" />
+          <Avatar name={name} size="sm" src={getUploadUrl(picture)} />
           <Box fontSize="sm" fontWeight="bold">
             {name}
           </Box>

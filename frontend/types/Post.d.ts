@@ -1,4 +1,5 @@
 import { Picture } from './Picture.d';
+import { User } from './User.d';
 export interface Post {
   id: number;
   title: string;
@@ -10,6 +11,7 @@ export interface Post {
   authorId: number;
   author: User;
   picture: Picture;
+  comments: Comment[];
 }
 
 export interface PageInfo {
@@ -23,4 +25,13 @@ export interface PageInfo {
 export interface PaginatedPosts {
   nodes: Post[];
   pageInfo: PageInfo;
+}
+
+export interface Comment {
+  id: number;
+  content: string;
+  postId: number;
+  authorId: number;
+  author: User;
+  createdAt: number;
 }

@@ -1,10 +1,15 @@
-import { PaginatedPosts, Post } from '../types/Post';
+import { Comment, PaginatedPosts, Post } from '../types/Post';
 import { gql } from 'graphql-request';
 import api from '../utils/api';
 
 interface PaginationDetails {
   page: number;
   limit: number;
+}
+
+export interface CreateCommentDetails {
+  postId: number;
+  content: string;
 }
 
 export const paginatePublishedPosts = async ({
@@ -42,6 +47,7 @@ export const getPostBySlug = async (slug: string) => {
   const query = gql`
     query Post($slug: String) {
       post(slug: $slug) {
+        id
         author {
           name
         }
@@ -52,6 +58,17 @@ export const getPostBySlug = async (slug: string) => {
         }
         title
         updatedAt
+        comments {
+          id
+          content
+          createdAt
+          author {
+            name
+            picture {
+              filePath
+            }
+          }
+        }
       }
     }
   `;
@@ -78,4 +95,33 @@ export const getSlugs = async () => {
   const response = await api.request(query, variables);
   const publishedPosts = response.publishedPosts as PaginatedPosts;
   return publishedPosts.nodes.map((post) => post.slug);
+};
+
+export const createComment = async ({
+  content,
+  postId,
+}: CreateCommentDetails) => {
+  const query = gql`
+    mutation CreateComment($details: CreateCommentInput!) {
+      createComment(details: $details) {
+        id
+        content
+        createdAt
+        author {
+          name
+          picture {
+            filePath
+          }
+        }
+      }
+    }
+  `;
+  const variables = {
+    details: {
+      content,
+      postId,
+    },
+  };
+  const response = await api.request(query, variables);
+  return response.createComment as Comment;
 };

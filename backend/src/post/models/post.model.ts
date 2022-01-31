@@ -1,3 +1,4 @@
+import { Comment } from './../../comment/models/comment.model';
 import { FileUpload } from './../../upload/models/upload.model';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { User } from 'src/user/models/user.model';
@@ -30,4 +31,6 @@ export class Post {
   author: User;
   @Field(() => FileUpload, { description: 'The picture of the post' })
   picture: FileUpload;
+  @Field(() => [Comment], { description: 'The comments of the post' })
+  comments: Comment[];
 }

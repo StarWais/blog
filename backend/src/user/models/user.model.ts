@@ -1,3 +1,4 @@
+import { FileUpload } from './../../upload/models/upload.model';
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Post } from 'src/post/models/post.model';
 
@@ -19,6 +20,10 @@ export class User {
   email: string;
   @Field({ description: "User's name" })
   name: string;
+  @Field(() => Int, { description: "User's avatar id", nullable: true })
+  pictureId?: number;
+  @Field({ description: "Users's avatar", nullable: true })
+  picture?: FileUpload;
   @Field(() => Role, { description: "User's role" })
   role: Role;
   @Field(() => [Post], { description: "User's posts" })

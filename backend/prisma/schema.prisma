@@ -8,42 +8,108 @@ datasource db {
 }
 
 model Post {
-  id        Int        @id @default(autoincrement())
-  title     String     @db.VarChar(255)
+  id        Int         @id @default(autoincrement())
+  title     String      @db.VarChar(255)
   content   String
-  published Boolean    @default(false)
+  published Boolean     @default(false)
+  slug      String      @unique @db.VarChar(255)
   authorId  Int
-  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author    User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
   pictureId Int
-  picture   PostUpload @relation(fields: [pictureId], references: [id])
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  slug      String     @unique @db.VarChar(255)
+  picture   PostPicture @relation(fields: [pictureId], references: [id], onDelete: Cascade)
+  likes     PostLike[]
+  comments  Comment[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
   @@map("posts")
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique @db.VarChar(255)
-  password String @db.VarChar(255)
-  name     String @db.VarChar(255)
-  posts    Post[]
-  role     Role
+  id           Int           @id @default(autoincrement())
+  email        String        @unique @db.VarChar(255)
+  password     String        @db.VarChar(255)
+  name         String        @db.VarChar(255)
+  posts        Post[]
+  role         Role          @default(USER)
+  pictureId    Int?
+  picture      UserAvatar?   @relation(fields: [pictureId], references: [id])
+  comments     Comment[]
+  commentLikes CommentLike[]
+  uploads      Upload[]
+  postLikes    PostLike[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   @@map("users")
 }
 
-model PostUpload {
-  id        Int      @id @default(autoincrement())
-  fileName  String   @db.VarChar(255)
-  fileType  String   @db.VarChar(255)
-  fileSize  Int
-  filePath  String   @db.VarChar(255)
-  createdAt DateTime @default(now())
-  posts     Post[]
+model Upload {
+  id           Int           @id @default(autoincrement())
+  fileName     String        @db.VarChar(255)
+  fileType     String        @db.VarChar(255)
+  fileSize     Int
+  filePath     String        @db.VarChar(255)
+  userId       Int
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userAvatar   UserAvatar[]
+  postPictures PostPicture[]
+  createdAt    DateTime      @default(now())
 
-  @@map("post_uploads")
+  @@map("uploads")
+}
+
+model UserAvatar {
+  id       Int    @id @default(autoincrement())
+  uploadId Int    @unique
+  upload   Upload @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  users    User[]
+
+  @@map("user_avatars")
+}
+
+model PostPicture {
+  id       Int    @id @default(autoincrement())
+  uploadId Int    @unique
+  upload   Upload @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  posts    Post[]
+
+  @@map("post_pictures")
+}
+
+model Comment {
+  id        Int           @id @default(autoincrement())
+  content   String        @db.VarChar(255)
+  replyTo   Int?
+  authorId  Int
+  author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  postId    Int
+  post      Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  likes     CommentLike[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("comments")
+}
+
+model CommentLike {
+  id        Int     @id @default(autoincrement())
+  commentId Int
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  authorId  Int
+  author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("comment_likes")
+}
+
+model PostLike {
+  id       Int  @id @default(autoincrement())
+  postId   Int
+  post     Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId Int
+  author   User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("post_likes")
 }
 
 enum Role {

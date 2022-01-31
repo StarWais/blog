@@ -2,15 +2,23 @@ import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash';
 
 import { hydrate } from '../store';
-import { PaginatedPosts } from '../../types/Post';
-import { paginatePublishedPosts } from './post.thunks';
+import { PaginatedPosts, Post } from '../../types/Post';
+import {
+  createComment,
+  getPostBySlug,
+  paginatePublishedPosts,
+} from './post.thunks';
 
 interface PostsState {
   paginatedResults: PaginatedPosts;
-  loading: 'idle' | 'pending' | 'succeeded' | 'failed';
+  currentPost: Post | null;
+  loadingPosts: 'idle' | 'pending' | 'succeeded' | 'failed';
+  creatingComment: 'idle' | 'pending' | 'succeeded' | 'failed';
+  loadingPost: 'idle' | 'pending' | 'succeeded' | 'failed';
 }
 
 const initialState: PostsState = {
+  currentPost: null,
   paginatedResults: {
     nodes: [],
     pageInfo: {
@@ -21,7 +29,9 @@ const initialState: PostsState = {
       totalCount: 0,
     },
   },
-  loading: 'idle',
+  loadingPosts: 'idle',
+  loadingPost: 'idle',
+  creatingComment: 'idle',
 };
 
 export const postsSlice = createSlice({
@@ -37,7 +47,7 @@ export const postsSlice = createSlice({
         };
       })
       .addCase(paginatePublishedPosts.pending, (state) => {
-        state.loading = 'pending';
+        state.loadingPosts = 'pending';
       })
       .addCase(paginatePublishedPosts.fulfilled, (state, action) => {
         state.paginatedResults = {
@@ -47,10 +57,25 @@ export const postsSlice = createSlice({
           ),
           pageInfo: action.payload.pageInfo,
         };
-        state.loading = 'succeeded';
+        state.loadingPosts = 'succeeded';
       })
       .addCase(paginatePublishedPosts.rejected, (state) => {
-        state.loading = 'failed';
+        state.loadingPosts = 'failed';
+      })
+      .addCase(getPostBySlug.fulfilled, (state, action) => {
+        state.loadingPost = 'succeeded';
+        state.currentPost = action.payload;
+      })
+      .addCase(createComment.pending, (state) => {
+        state.creatingComment = 'pending';
+      })
+      .addCase(createComment.fulfilled, (state, action) => {
+        state.creatingComment = 'succeeded';
+        //@ts-ignore
+        state.currentPost = {
+          ...state.currentPost,
+          comments: [action.payload, ...state.currentPost!.comments],
+        };
       });
   },
 });

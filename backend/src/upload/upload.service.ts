@@ -1,13 +1,15 @@
-import { UploadRepository } from './upload.repository';
 import { FileUpload } from 'graphql-upload';
 import { Injectable, NotFoundException } from '@nestjs/common';
+
+import { PrismaService } from './../prisma.service';
+import { Role, User } from './../user/models/user.model';
 import * as Sharp from 'sharp';
 import { uuid } from 'uuidv4';
 import { join } from 'path';
 
 @Injectable()
 export class UploadService {
-  constructor(private readonly uploadRepository: UploadRepository) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   private streamToString = (stream) => {
     const chunks = [];
@@ -17,7 +19,7 @@ export class UploadService {
       stream.on('end', () => resolve(Buffer.concat(chunks)));
     });
   };
-  async createPostPicture(fileDetails: FileUpload) {
+  private createFile = async (fileDetails: FileUpload) => {
     const { createReadStream } = fileDetails;
     const image = await this.streamToString(createReadStream());
     const sharpImage = Sharp(image);
@@ -25,16 +27,39 @@ export class UploadService {
     const newFileName = `${pictureuuid}.avif`;
     const newFilePath = join(process.cwd(), '..', '/uploads', newFileName);
     const newFileInfo = await sharpImage.avif().toFile(newFilePath);
-    return this.uploadRepository.createFile({
+    return {
       fileName: pictureuuid,
       fileType: 'avif',
       fileSize: newFileInfo.size,
       filePath: `uploads/${newFileName}`,
+    };
+  };
+  async uploadPicture(fileDetails: FileUpload, user: User) {
+    const file = await this.createFile(fileDetails);
+    return this.prisma.upload.create({
+      data: {
+        ...file,
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
+      },
     });
   }
 
-  async getPostPictureById(id: number) {
-    const file = await this.uploadRepository.getFileById(id);
+  async getPictureByIdWithPermissions(pictureId: number, user: User) {
+    const file = await this.getPictureById(pictureId);
+    if (file.userId !== user.id && user.role !== Role.ADMIN) {
+      throw new NotFoundException('You are not the author of this file');
+    }
+    return file;
+  }
+
+  async getPictureById(id: number) {
+    const file = await this.prisma.upload.findUnique({
+      where: { id },
+    });
     if (!file) {
       throw new NotFoundException(`File with id ${id} not found`);
     }

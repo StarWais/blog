@@ -11,6 +11,38 @@ type Auth {
   user: User!
 }
 
+type Comment {
+  """Comment's author"""
+  author: User!
+
+  """User id"""
+  authorId: Int!
+
+  """The comment text"""
+  content: String!
+
+  """Comment's creation date"""
+  createdAt: Timestamp!
+
+  """Comment id"""
+  id: Int!
+
+  """Post id"""
+  postId: Int!
+
+  """Comment's last update date"""
+  updatedAt: Timestamp!
+}
+
+"""Create comment input"""
+input CreateCommentInput {
+  """The comment text"""
+  content: String!
+
+  """Post id"""
+  postId: Int!
+}
+
 input CreatePostInput {
   content: String!
   pictureId: Int!
@@ -46,6 +78,8 @@ input LoginInput {
 }
 
 type Mutation {
+  createComment(details: CreateCommentInput!): Comment!
+
   """Create a new post"""
   createPost(details: CreatePostInput!): Post!
 
@@ -57,6 +91,7 @@ type Mutation {
 
   """Update a post"""
   updatePost(details: UpdatePostInput!, id: Int!): Post!
+  updateUser(details: UpdateUserInput!): User!
   uploadFile(file: Upload!): FileUpload!
 }
 
@@ -79,6 +114,9 @@ type Post {
 
   """The unique identifier of the author of the post"""
   authorId: Int!
+
+  """The comments of the post"""
+  comments: [Comment!]!
 
   """Post's content"""
   content: String!
@@ -179,6 +217,20 @@ input UpdatePostInput {
   title: String!
 }
 
+input UpdateUserInput {
+  """User email"""
+  email: String
+
+  """The unique identifier of the user"""
+  id: Int
+
+  """User name"""
+  name: String
+
+  """User name"""
+  pictureId: Int
+}
+
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
@@ -191,6 +243,12 @@ type User {
 
   """User's name"""
   name: String!
+
+  """Users's avatar"""
+  picture: FileUpload
+
+  """User's avatar id"""
+  pictureId: Int
 
   """User's posts"""
   posts: [Post!]!

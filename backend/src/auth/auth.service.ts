@@ -8,8 +8,8 @@ import {
 import { hash, compare } from 'bcrypt';
 
 import { UserService } from './../user/user.service';
-import { SignUpInput } from './dto/signup.input';
-import { LoginInput } from './dto/login.input';
+import { SignUpInput } from './dto/inputs/signup.input';
+import { LoginInput } from './dto/inputs/login.input';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +26,6 @@ export class AuthService {
     signupDetails.password = await this.hashPassword(signupDetails.password);
     const user = await this.userService.createUser({
       ...signupDetails,
-      role: Role.USER,
     });
     return this.generateTokens({
       userId: user.id,

@@ -2,7 +2,7 @@ import { Box } from '@chakra-ui/react';
 import Image from 'next/image';
 import React from 'react';
 import { Picture } from '../../types/Picture';
-import { getPostPictureUrl } from '../../utils/helpers';
+import { getUploadUrl } from '../../utils/helpers';
 import { PostType } from './index';
 
 interface PostImageProps {
@@ -13,7 +13,7 @@ interface PostImageProps {
 const PostImage = ({ postType, picture }: PostImageProps) => {
   const getImageHeight = () => {
     if (postType === 'large') {
-      return '300px';
+      return '350px';
     }
     if (postType === 'extralarge') {
       return '500px';
@@ -26,11 +26,7 @@ const PostImage = ({ postType, picture }: PostImageProps) => {
       h={getImageHeight()}
       w={postType === 'normal' ? 'full' : '50%'}
     >
-      <Image
-        layout="fill"
-        src={getPostPictureUrl(picture)}
-        alt="post picture"
-      />
+      <Image layout="fill" src={getUploadUrl(picture)} alt="post picture" />
     </Box>
   );
 };

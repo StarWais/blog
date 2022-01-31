@@ -1,22 +1,21 @@
 import { UploadService } from './upload.service';
 import { UseGuards } from '@nestjs/common';
-import { RolesGuard } from '../guards/roles.guard';
 import { GqlAuthGuard } from '../guards/gql-auth.guard';
-import { Role } from '../user/models/user.model';
-import { Roles } from '../decorators/roles.decorator';
+import { User } from '../user/models/user.model';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { FileUpload as FileUploadModel } from './models/upload.model';
+import { CurrentUser } from 'src/decorators/current-user.decorator';
 
 @Resolver(() => FileUploadModel)
 export class UploadResolver {
   constructor(private readonly uploadService: UploadService) {}
-  @Roles(Role.ADMIN)
-  @UseGuards(GqlAuthGuard, RolesGuard)
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => FileUploadModel)
   async uploadFile(
     @Args({ name: 'file', type: () => GraphQLUpload }) fileDetails: FileUpload,
+    @CurrentUser() currentUser: User,
   ) {
-    return this.uploadService.createPostPicture(fileDetails);
+    return this.uploadService.uploadPicture(fileDetails, currentUser);
   }
 }

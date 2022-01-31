@@ -1,3 +1,4 @@
+import { Picture } from './Picture.d';
 import { Post } from './Post';
 
 export enum Role {
@@ -11,4 +12,5 @@ export interface User {
   name: string;
   role: Role;
   posts: Post[];
+  picture?: Picture;
 }

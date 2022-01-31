@@ -1,6 +1,6 @@
-import { RefreshTokenInput } from './dto/refresh-token-input.input';
-import { SignUpInput } from './dto/signup.input';
-import { LoginInput } from './dto/login.input';
+import { User } from './../user/models/user.model';
+import { RefreshTokenInput } from './dto/inputs/refresh-token-input.input';
+import { SignUpInput } from './dto/inputs/signup.input';
 import {
   Resolver,
   Args,
@@ -11,6 +11,7 @@ import {
 import { AuthService } from './auth.service';
 import { Auth } from './models/auth.model';
 import { Token } from './models/token.modal';
+import { LoginInput } from './dto/inputs/login.input';
 
 @Resolver(() => Auth)
 export class AuthResolver {
@@ -32,7 +33,7 @@ export class AuthResolver {
   ) {
     return this.authService.refreshToken(token);
   }
-  @ResolveField('user')
+  @ResolveField(() => User)
   async user(@Parent() auth: Auth) {
     const user = await this.authService.getUserFromToken(auth.accessToken);
     return user;

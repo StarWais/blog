@@ -56,7 +56,10 @@ export async function Paginate<T>(
     ...args,
   });
 
-  const totalCount: number = await prismaClient[entity].count();
+  const totalCount = await prismaClient[entity].count({
+    ...args,
+  });
+
   const totalPages = Math.ceil(totalCount / take);
   const hasNextPage = paginationArgs.page < totalPages;
   const hasPreviousPage = paginationArgs.page > 1;

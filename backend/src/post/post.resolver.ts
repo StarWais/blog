@@ -1,3 +1,4 @@
+import { CommentService } from './../comment/comment.service';
 import { UploadService } from './../upload/upload.service';
 import { FileUpload } from './../upload/models/upload.model';
 import { RolesGuard } from './../guards/roles.guard';
@@ -32,6 +33,7 @@ export class PostResolver {
     private readonly postService: PostService,
     private readonly userService: UserService,
     private readonly uploadService: UploadService,
+    private readonly commentService: CommentService,
   ) {}
 
   @Query(() => Post, { description: 'Get a post by id or slug' })
@@ -102,7 +104,15 @@ export class PostResolver {
   @ResolveField('picture', () => FileUpload)
   async picture(@Parent() post: Post) {
     const { pictureId } = post;
-    const picture = await this.uploadService.getPostPictureById(pictureId);
+    const picture = await this.postService.getPostPictureUpload({
+      id: pictureId,
+    });
     return picture;
+  }
+  @ResolveField('comments', () => [Comment])
+  async comments(@Parent() post: Post) {
+    const { id } = post;
+    const comments = await this.commentService.getPostComments(id);
+    return comments;
   }
 }

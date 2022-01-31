@@ -28,6 +28,9 @@ export const signUp = async ({ email, password, name }: SignUpDetails) => {
           email
           role
           name
+          picture {
+            filePath
+          }
         }
       }
     }
@@ -52,6 +55,9 @@ export const logIn = async ({ email, password }: LogInDetails) => {
           name
           email
           role
+          picture {
+            filePath
+          }
         }
       }
     }
@@ -72,6 +78,9 @@ export const getMe = async () => {
         email
         name
         role
+        picture {
+          filePath
+        }
       }
     }
   `;
