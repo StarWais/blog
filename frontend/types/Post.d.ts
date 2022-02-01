@@ -32,6 +32,15 @@ export interface Comment {
   content: string;
   postId: number;
   authorId: number;
+  replyTo: number;
   author: User;
   createdAt: number;
+  likes: CommentLike[];
+}
+
+export interface CommentLike {
+  id: number;
+  commentId: number;
+  authorId: number;
+  author: User;
 }

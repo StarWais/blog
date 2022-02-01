@@ -18,6 +18,8 @@ export class Comment {
   createdAt: Date;
   @Field({ description: "Comment's last update date" })
   updatedAt: Date;
+  @Field(() => Int, { description: 'Reply to which comment', nullable: true })
+  replyTo?: number;
   @Field(() => [CommentLike])
   likes: CommentLike[];
 }

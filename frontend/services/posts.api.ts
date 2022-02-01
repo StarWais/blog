@@ -1,15 +1,21 @@
-import { Comment, PaginatedPosts, Post } from '../types/Post';
+import { Comment, CommentLike, PaginatedPosts, Post } from '../types/Post';
 import { gql } from 'graphql-request';
 import api from '../utils/api';
+import { defer } from 'lodash';
 
 interface PaginationDetails {
   page: number;
   limit: number;
 }
-
 export interface CreateCommentDetails {
   postId: number;
   content: string;
+}
+export interface ReplyToCommentDetails extends CreateCommentDetails {
+  replyTo: number;
+}
+export interface LikeCommentDetails {
+  commentId: number;
 }
 
 export const paginatePublishedPosts = async ({
@@ -62,11 +68,15 @@ export const getPostBySlug = async (slug: string) => {
           id
           content
           createdAt
+          replyTo
           author {
             name
             picture {
               filePath
             }
+          }
+          likes {
+            authorId
           }
         }
       }
@@ -96,17 +106,14 @@ export const getSlugs = async () => {
   const publishedPosts = response.publishedPosts as PaginatedPosts;
   return publishedPosts.nodes.map((post) => post.slug);
 };
-
-export const createComment = async ({
-  content,
-  postId,
-}: CreateCommentDetails) => {
+export const createComment = async (details: CreateCommentDetails) => {
   const query = gql`
     mutation CreateComment($details: CreateCommentInput!) {
       createComment(details: $details) {
         id
         content
         createdAt
+        replyTo
         author {
           name
           picture {
@@ -117,11 +124,45 @@ export const createComment = async ({
     }
   `;
   const variables = {
-    details: {
-      content,
-      postId,
-    },
+    details,
   };
   const response = await api.request(query, variables);
   return response.createComment as Comment;
+};
+export const replyToComment = async (details: ReplyToCommentDetails) => {
+  const query = gql`
+    mutation ReplyToComment($details: ReplyToCommentInput!) {
+      replyToComment(details: $details) {
+        content
+        createdAt
+        id
+        author {
+          name
+          picture {
+            filePath
+          }
+        }
+        replyTo
+      }
+    }
+  `;
+  const variables = {
+    details,
+  };
+  const response = await api.request(query, variables);
+  return response.createComment as Comment;
+};
+export const likeComment = async (details: LikeCommentDetails) => {
+  const query = gql`
+    mutation LikeComment($details: LikeCommentInput!) {
+      likeComment(details: $details) {
+        authorId
+      }
+    }
+  `;
+  const variables = {
+    details,
+  };
+  const response = await api.request(query, variables);
+  return response.likeComment as CommentLike;
 };

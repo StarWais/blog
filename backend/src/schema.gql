@@ -31,6 +31,9 @@ type Comment {
   """Post id"""
   postId: Int!
 
+  """Reply to which comment"""
+  replyTo: Int
+
   """Comment's last update date"""
   updatedAt: Timestamp!
 }
