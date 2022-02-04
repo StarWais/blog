@@ -2,19 +2,16 @@ import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash';
 
 import { hydrate } from '../store';
-import { PaginatedPosts, Post } from '../../types/Post';
-import {
-  createComment,
-  getPostBySlug,
-  paginatePublishedPosts,
-} from './post.thunks';
+import { Post } from '../../types/Post';
+import { getPostBySlug, paginatePublishedPosts } from './post.thunks';
+import { LoadingState } from './../store';
+import { Paginated } from '../../types/Pagination';
 
 interface PostsState {
-  paginatedResults: PaginatedPosts;
+  paginatedResults: Paginated<Post>;
   currentPost: Post | null;
-  loadingPosts: 'idle' | 'pending' | 'succeeded' | 'failed';
-  creatingComment: 'idle' | 'pending' | 'succeeded' | 'failed';
-  loadingPost: 'idle' | 'pending' | 'succeeded' | 'failed';
+  loadingPosts: LoadingState;
+  loadingPost: LoadingState;
 }
 
 const initialState: PostsState = {
@@ -31,7 +28,6 @@ const initialState: PostsState = {
   },
   loadingPosts: 'idle',
   loadingPost: 'idle',
-  creatingComment: 'idle',
 };
 
 export const postsSlice = createSlice({
@@ -65,17 +61,6 @@ export const postsSlice = createSlice({
       .addCase(getPostBySlug.fulfilled, (state, action) => {
         state.loadingPost = 'succeeded';
         state.currentPost = action.payload;
-      })
-      .addCase(createComment.pending, (state) => {
-        state.creatingComment = 'pending';
-      })
-      .addCase(createComment.fulfilled, (state, action) => {
-        state.creatingComment = 'succeeded';
-        //@ts-ignore
-        state.currentPost = {
-          ...state.currentPost,
-          comments: [action.payload, ...state.currentPost!.comments],
-        };
       });
   },
 });

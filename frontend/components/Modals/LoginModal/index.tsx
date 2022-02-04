@@ -14,7 +14,7 @@ import {
 import { Form, Formik } from 'formik';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { logIn } from '../../../redux/auth/auth.thunks';
-import { LogInDetails } from '../../../services/auth.api';
+import { LogInDetails } from '../../../api/auth.api';
 import AuthInput from '../../UI/Inputs/AuthInput';
 import validationSchema from './validation';
 

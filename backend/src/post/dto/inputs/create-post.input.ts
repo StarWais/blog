@@ -1,10 +1,16 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
-import { Length, IsNotEmpty, IsPositive } from 'class-validator';
+import {
+  Length,
+  IsNotEmpty,
+  IsPositive,
+  IsAlphanumeric,
+} from 'class-validator';
 
 @InputType()
 export class CreatePostInput {
   @Field()
   @IsNotEmpty()
+  @IsAlphanumeric()
   @Length(3, 255)
   title: string;
 

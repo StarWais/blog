@@ -11,36 +11,4 @@ export interface Post {
   authorId: number;
   author: User;
   picture: Picture;
-  comments: Comment[];
-}
-
-export interface PageInfo {
-  totalPages: number;
-  totalCount: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  currentPage: number;
-}
-
-export interface PaginatedPosts {
-  nodes: Post[];
-  pageInfo: PageInfo;
-}
-
-export interface Comment {
-  id: number;
-  content: string;
-  postId: number;
-  authorId: number;
-  replyTo: number;
-  author: User;
-  createdAt: number;
-  likes: CommentLike[];
-}
-
-export interface CommentLike {
-  id: number;
-  commentId: number;
-  authorId: number;
-  author: User;
 }

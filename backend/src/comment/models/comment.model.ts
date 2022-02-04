@@ -20,6 +20,20 @@ export class Comment {
   updatedAt: Date;
   @Field(() => Int, { description: 'Reply to which comment', nullable: true })
   replyTo?: number;
+  @Field(() => Int, { description: 'Parent comment id', nullable: true })
+  parent?: number;
+  @Field(() => Int, {
+    description: 'User id to which this comment is a reply',
+    nullable: true,
+  })
+  replyToUserId?: number;
+  @Field(() => User, {
+    description: 'User to which this comment is a reply',
+    nullable: true,
+  })
+  replyUser?: User;
   @Field(() => [CommentLike])
   likes: CommentLike[];
+  @Field(() => [Comment])
+  children: Comment[];
 }

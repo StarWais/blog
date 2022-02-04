@@ -1,5 +1,3 @@
-import { authSlice } from './auth/auth.slice';
-import { postsSlice } from './posts/post.slice';
 import {
   Action,
   AsyncThunk,
@@ -9,11 +7,16 @@ import {
 } from '@reduxjs/toolkit';
 import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 
+import { postCommentsSlice } from './comments/post/post-comments.slice';
+import { authSlice } from './auth/auth.slice';
+import { postsSlice } from './posts/post.slice';
+
 const makeStore = () =>
   configureStore({
     reducer: {
       posts: postsSlice.reducer,
       auth: authSlice.reducer,
+      postComments: postCommentsSlice.reducer,
     },
     devTools: true,
   });
@@ -29,3 +32,4 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action
 >;
+export type LoadingState = 'idle' | 'pending' | 'succeeded' | 'failed';

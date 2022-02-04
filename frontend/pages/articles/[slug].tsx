@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 import PostInformation from '../../components/pages/Post/PostInformation';
-import { getSlugs } from '../../services/posts.api';
+import { getSlugs } from '../../api/posts.api';
 import { Post } from '../../types/Post';
 import { getUploadUrl } from '../../utils/helpers';
 import { wrapper } from '../../redux/store';

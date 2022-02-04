@@ -31,6 +31,4 @@ export class Post {
   author: User;
   @Field(() => FileUpload, { description: 'The picture of the post' })
   picture: FileUpload;
-  @Field(() => [Comment], { description: 'The comments of the post' })
-  comments: Comment[];
 }

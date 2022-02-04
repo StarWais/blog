@@ -6,5 +6,3 @@ export const isFetchingPosts = (state: AppState) =>
   state.posts.loadingPosts === 'pending';
 export const getPageInfo = (state: AppState) =>
   state.posts.paginatedResults.pageInfo;
-export const isCreatingComment = (state: AppState) =>
-  state.posts.creatingComment === 'pending';

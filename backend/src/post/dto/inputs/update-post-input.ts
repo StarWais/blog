@@ -1,17 +1,24 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
-import { Length, IsNotEmpty, IsPositive, IsOptional } from 'class-validator';
+import {
+  Length,
+  IsNotEmpty,
+  IsPositive,
+  IsOptional,
+  IsAlphanumeric,
+} from 'class-validator';
 
 @InputType()
 export class UpdatePostInput {
   @Field()
-  @IsNotEmpty()
   @IsOptional()
+  @IsNotEmpty()
+  @IsAlphanumeric()
   @Length(3, 255)
   title?: string;
 
   @Field()
-  @IsNotEmpty()
   @IsOptional()
+  @IsNotEmpty()
   @Length(3, 100000)
   content?: string;
 

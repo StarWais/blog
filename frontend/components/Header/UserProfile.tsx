@@ -14,7 +14,7 @@ import { logOut } from '../../redux/auth/auth.slice';
 import { Role, User } from '../../types/User.d';
 import { getUploadUrl } from '../../utils/helpers';
 
-const UserProfile = ({ name, role, picture }: User) => {
+const UserProfile = ({ name, role, picture, id }: User) => {
   const dispatch = useAppDispatch();
   return (
     <Menu>
@@ -33,6 +33,9 @@ const UserProfile = ({ name, role, picture }: User) => {
             <NextLink href="/admin">Admin panel</NextLink>
           </MenuItem>
         )}
+        <MenuItem>
+          <NextLink href={`/profile/${id}`}>My profile</NextLink>
+        </MenuItem>
         <MenuItem>
           <NextLink href="/settings">Settings</NextLink>
         </MenuItem>

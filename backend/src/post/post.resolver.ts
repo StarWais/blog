@@ -109,10 +109,4 @@ export class PostResolver {
     });
     return picture;
   }
-  @ResolveField('comments', () => [Comment])
-  async comments(@Parent() post: Post) {
-    const { id } = post;
-    const comments = await this.commentService.getPostComments(id);
-    return comments;
-  }
 }

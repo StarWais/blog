@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import api from '../utils/api';
+import api from '../api/fetcher';
 import { User } from '../types/User';
 
 export interface SignUpDetails {
@@ -25,6 +25,7 @@ export const signUp = async ({ email, password, name }: SignUpDetails) => {
         accessToken
         refreshToken
         user {
+          id
           email
           role
           name
@@ -52,6 +53,7 @@ export const logIn = async ({ email, password }: LogInDetails) => {
         accessToken
         refreshToken
         user {
+          id
           name
           email
           role
@@ -75,6 +77,7 @@ export const getMe = async () => {
   const query = gql`
     query GetMe {
       getMe {
+        id
         email
         name
         role

@@ -1,6 +1,7 @@
 import { Box, Heading, HStack, Text } from '@chakra-ui/react';
 import Moment from 'react-moment';
 import { Post } from '../../../types/Post';
+import NextLink from '../../NextLink';
 
 interface PostInformationProps {
   post: Post;
@@ -13,7 +14,12 @@ const PostInformation = ({ post }: PostInformationProps) => {
         {post.title}
       </Heading>
       <HStack mt={3}>
-        <Text fontWeight="bold">Written by {post.author.name}</Text>
+        <Text fontWeight="bold">
+          Written by{' '}
+          <NextLink href={`/profile/${post.author.id}`}>
+            {post.author.name}
+          </NextLink>
+        </Text>
         <Box color="gray.500">
           <Moment date={new Date(post.createdAt)} format="LLLL" />
         </Box>

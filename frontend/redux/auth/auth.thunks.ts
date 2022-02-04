@@ -3,7 +3,7 @@ import {
   logIn as apiLogIn,
   signUp as apiSignUp,
   getMe as apiGetMe,
-} from '../../services/auth.api';
+} from '../../api/auth.api';
 
 export const logIn = createAsyncThunk('auth/logIn', apiLogIn);
 export const signUp = createAsyncThunk('auth/signUp', apiSignUp);

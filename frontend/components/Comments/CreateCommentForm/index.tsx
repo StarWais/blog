@@ -1,5 +1,7 @@
 import {
   Avatar,
+  Button,
+  ButtonGroup,
   FormControl,
   FormErrorMessage,
   HStack,
@@ -20,9 +22,22 @@ export interface CommentFormInputs {
 export interface CreateCommentFormProps {
   onSubmit: (data: CommentFormInputs) => void;
   isLoading: boolean;
+  placeholder?: string;
+  defaultText?: string;
+  withButtons?: boolean;
+  comfirmButtonText?: string;
+  onCancel?: () => void;
 }
 
-const CreateCommentForm = ({ onSubmit, isLoading }: CreateCommentFormProps) => {
+const CreateCommentForm = ({
+  onSubmit,
+  isLoading,
+  defaultText,
+  onCancel,
+  comfirmButtonText = 'Submit',
+  withButtons = false,
+  placeholder = 'Add a comment...',
+}: CreateCommentFormProps) => {
   const user = useAppSelector(getCurrentUser);
   const {
     register,
@@ -39,14 +54,16 @@ const CreateCommentForm = ({ onSubmit, isLoading }: CreateCommentFormProps) => {
     reset();
   };
   return (
-    <HStack mt={4} mb={8} w="full">
-      <Avatar size="md" src={getUploadUrl(user.picture)} name={user.name} />
-      <form
-        onSubmit={handleSubmit<CommentFormInputs>(handleFormSubmit)}
-        style={{
-          width: '100%',
-        }}
-      >
+    <form
+      onSubmit={handleSubmit<CommentFormInputs>(handleFormSubmit)}
+      style={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <HStack my={4} w="full">
+        <Avatar size="md" src={getUploadUrl(user.picture)} name={user.name} />
         <FormControl isInvalid={Boolean(errors.content)} isDisabled={isLoading}>
           <Input
             {...register('content', {
@@ -54,7 +71,8 @@ const CreateCommentForm = ({ onSubmit, isLoading }: CreateCommentFormProps) => {
               minLength: 2,
               maxLength: 255,
             })}
-            placeholder="Add a comment..."
+            defaultValue={defaultText}
+            placeholder={placeholder}
             size="lg"
             fontSize="md"
           />
@@ -62,8 +80,16 @@ const CreateCommentForm = ({ onSubmit, isLoading }: CreateCommentFormProps) => {
             {errors.content?.message}
           </FormErrorMessage>
         </FormControl>
-      </form>
-    </HStack>
+      </HStack>
+      {withButtons && (
+        <ButtonGroup ml="auto" mt={3}>
+          <Button onClick={onCancel}>Cancel</Button>
+          <Button type="submit" colorScheme="blue" isLoading={isLoading}>
+            {comfirmButtonText}
+          </Button>
+        </ButtonGroup>
+      )}
+    </form>
   );
 };
 

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../prisma.service';
 import { User } from '../user/models/user.model';
@@ -22,7 +22,11 @@ export class CommentLikeService {
       },
     });
     if (like) {
-      throw new BadRequestException('You already liked this comment');
+      return this.prisma.commentLike.delete({
+        where: {
+          id: like.id,
+        },
+      });
     }
     return this.prisma.commentLike.create({
       data: {

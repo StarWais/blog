@@ -17,6 +17,7 @@ type Comment {
 
   """User id"""
   authorId: Int!
+  children: [Comment!]!
 
   """The comment text"""
   content: String!
@@ -28,11 +29,20 @@ type Comment {
   id: Int!
   likes: [CommentLike!]!
 
+  """Parent comment id"""
+  parent: Int
+
   """Post id"""
   postId: Int!
 
   """Reply to which comment"""
   replyTo: Int
+
+  """User id to which this comment is a reply"""
+  replyToUserId: Int
+
+  """User to which this comment is a reply"""
+  replyUser: User
 
   """Comment's last update date"""
   updatedAt: Timestamp!
@@ -61,6 +71,11 @@ input CreatePostInput {
   content: String!
   pictureId: Int!
   title: String!
+}
+
+input DeleteCommentInput {
+  """Comment id"""
+  commentId: Int!
 }
 
 type FileUpload {
@@ -101,6 +116,7 @@ type Mutation {
 
   """Create a new post"""
   createPost(details: CreatePostInput!): Post!
+  deleteComment(details: DeleteCommentInput!): Comment!
 
   """Delete a post"""
   deletePost(id: Int!): Int!
@@ -124,6 +140,11 @@ type PageInfo {
   totalPages: Int!
 }
 
+type PaginatedComment {
+  nodes: [Comment!]
+  pageInfo: PageInfo!
+}
+
 type PaginatedPost {
   nodes: [Post!]
   pageInfo: PageInfo!
@@ -135,9 +156,6 @@ type Post {
 
   """The unique identifier of the author of the post"""
   authorId: Int!
-
-  """The comments of the post"""
-  comments: [Comment!]!
 
   """Post's content"""
   content: String!
@@ -176,6 +194,16 @@ type Query {
     """Current page"""
     page: Int!
   ): PaginatedPost!
+  comments(
+    """Current page"""
+    limit: Int = 10
+
+    """Current page"""
+    page: Int!
+
+    """Post id"""
+    postId: Int!
+  ): PaginatedComment!
   getMe: User!
 
   """Get a post by id or slug"""

@@ -6,7 +6,6 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { wrapper } from '../redux/store';
 import AuthProvider from '../components/Auth/AuthProvider';
-import { Role } from '../types/User';
 import AuthGuard from '../components/Auth/AuthGuard';
 
 type AppProps<P = any> = {
