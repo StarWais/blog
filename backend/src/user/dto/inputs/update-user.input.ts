@@ -26,6 +26,12 @@ export class UpdateUserInput {
   @Length(5, 255)
   email?: string;
 
+  @Field({ description: 'User description', nullable: true })
+  @IsOptional()
+  @IsNotEmpty()
+  @Length(5, 255)
+  description?: string;
+
   @Field({ description: 'User name', nullable: true })
   @IsOptional()
   @IsNotEmpty()

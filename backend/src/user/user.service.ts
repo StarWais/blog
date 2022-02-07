@@ -72,6 +72,34 @@ export class UserService {
     return await this.createUserAvatar(uploadId);
   }
 
+  async getTotalLikesCount(userId: number) {
+    const likesCount = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        _count: {
+          select: {
+            postLikes: true,
+            commentLikes: true,
+          },
+        },
+      },
+    });
+    return likesCount._count.commentLikes + likesCount._count.postLikes;
+  }
+  async getTotalCommentsCount(userId: number) {
+    const commentsCount = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        _count: {
+          select: {
+            comments: true,
+          },
+        },
+      },
+    });
+    return commentsCount._count.comments;
+  }
+
   async getUserByEmail(email: string) {
     const user = await this.prisma.user.findUnique({
       where: { email },
@@ -88,7 +116,16 @@ export class UserService {
     });
   }
 
-  async updateUser(details: UpdateUserInput, currentUser: User) {
+  async updateLastActive(userId: number) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        lastActivedAt: new Date(),
+      },
+    });
+  }
+
+  async updateUser(details: UpdateUserInput, currentUser?: User) {
     let userId: number;
     if (details.id) {
       if (currentUser.role === Role.ADMIN) {
@@ -115,6 +152,7 @@ export class UserService {
         data: {
           name: details.name,
           email: details.email,
+          description: details.description,
           picture: {
             connect: {
               id: avatar.id,
@@ -128,6 +166,7 @@ export class UserService {
       data: {
         name: details.name,
         email: details.email,
+        description: details.description,
       },
     });
   }

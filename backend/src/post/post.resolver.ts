@@ -1,5 +1,3 @@
-import { CommentService } from './../comment/comment.service';
-import { UploadService } from './../upload/upload.service';
 import { FileUpload } from './../upload/models/upload.model';
 import { RolesGuard } from './../guards/roles.guard';
 import { GqlAuthGuard } from './../guards/gql-auth.guard';
@@ -32,8 +30,6 @@ export class PostResolver {
   constructor(
     private readonly postService: PostService,
     private readonly userService: UserService,
-    private readonly uploadService: UploadService,
-    private readonly commentService: CommentService,
   ) {}
 
   @Query(() => Post, { description: 'Get a post by id or slug' })

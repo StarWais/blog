@@ -13,4 +13,7 @@ export interface User {
   role: Role;
   posts: Post[];
   picture?: Picture;
+  likesCount: number;
+  commentsCount: number;
+  lastActivedAt: Date;
 }

@@ -68,7 +68,8 @@ export class AuthService {
       secret: process.env.JWT_REFRESH_SECRET,
     });
   }
-  generateTokens(payload: { userId: number }) {
+  async generateTokens(payload: { userId: number }) {
+    await this.userService.updateLastActive(payload.userId);
     return {
       accessToken: this.generateAccessToken(payload),
       refreshToken: this.generateRefreshToken(payload),

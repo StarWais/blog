@@ -1,5 +1,5 @@
 import { Box, Container } from '@chakra-ui/react';
-import { GetStaticPaths } from 'next';
+import { GetStaticPaths, NextPage } from 'next';
 import { NextParsedUrlQuery } from 'next/dist/server/request-meta';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -22,7 +22,7 @@ interface IParams extends NextParsedUrlQuery {
   slug: string;
 }
 
-const Post = () => {
+const Post: NextPage = () => {
   const post = useAppSelector(getCurrentPost);
   const router = useRouter();
 

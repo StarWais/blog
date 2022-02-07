@@ -1,4 +1,5 @@
 import { GraphQLClient, gql } from 'graphql-request';
+import { xor } from 'lodash';
 
 const endpoint = (process.env.NEXT_PUBLIC_SERVER_URL as string) + 'graphql';
 

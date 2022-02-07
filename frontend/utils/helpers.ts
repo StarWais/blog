@@ -1,6 +1,4 @@
-import { Comment } from '../types/Post';
 import { Picture } from './../types/Picture.d';
-import _ from 'lodash';
 
 export const getUploadUrl = (picture: Picture | null | undefined) => {
   if (!picture) return '';

@@ -1,9 +1,9 @@
-import { UploadService } from './../upload/upload.service';
 import { FileUpload } from './../upload/models/upload.model';
 import { CurrentUser } from './../decorators/current-user.decorator';
 import { GqlAuthGuard } from './../guards/gql-auth.guard';
 import {
   Args,
+  Int,
   Mutation,
   Parent,
   Query,
@@ -14,13 +14,11 @@ import { User } from './models/user.model';
 import { UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserInput } from './dto/inputs/update-user.input';
+import { GetUserArgs } from './dto/args/get-user.args';
 
 @Resolver(() => User)
 export class UserResolver {
-  constructor(
-    private readonly uploadService: UploadService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
   @UseGuards(GqlAuthGuard)
   @Query(() => User)
   async getMe(@CurrentUser() currentUser: User) {
@@ -37,6 +35,12 @@ export class UserResolver {
     return updatedUser;
   }
 
+  @Query(() => User)
+  async getProfile(@Args() getUserArgs: GetUserArgs) {
+    const profile = await this.userService.getUserById(getUserArgs.id);
+    return profile;
+  }
+
   @ResolveField('picture', () => FileUpload)
   async picture(@Parent() currentUser: User) {
     if (!currentUser.pictureId) return null;
@@ -44,5 +48,16 @@ export class UserResolver {
       id: currentUser.pictureId,
     });
     return avatar;
+  }
+
+  @ResolveField('likesCount', () => Int)
+  async getLikesCount(@Parent() currentUser: User) {
+    const count = await this.userService.getTotalLikesCount(currentUser.id);
+    return count;
+  }
+  @ResolveField('commentsCount', () => Int)
+  async getCommentsCount(@Parent() currentUser: User) {
+    const count = await this.userService.getTotalCommentsCount(currentUser.id);
+    return count;
   }
 }

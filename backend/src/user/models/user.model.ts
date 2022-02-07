@@ -20,6 +20,8 @@ export class User {
   email: string;
   @Field({ description: "User's name" })
   name: string;
+  @Field({ description: "User's description", nullable: true })
+  description?: string;
   @Field(() => Int, { description: "User's avatar id", nullable: true })
   pictureId?: number;
   @Field({ description: "Users's avatar", nullable: true })
@@ -28,4 +30,10 @@ export class User {
   role: Role;
   @Field(() => [Post], { description: "User's posts" })
   posts: Post[];
+  @Field(() => Int, { description: "User's likes count" })
+  likesCount: number;
+  @Field(() => Int, { description: "User's comments count" })
+  commentsCount: number;
+  @Field({ description: "Users's last active date" })
+  lastActivedAt: Date;
 }
