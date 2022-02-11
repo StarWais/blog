@@ -8,28 +8,35 @@ import {
   InputProps,
   InputRightElement,
 } from '@chakra-ui/react';
-import { useField } from 'formik';
 import { Fragment } from 'react';
+import { useController, UseControllerProps } from 'react-hook-form';
 import { useToggle } from '../../../hooks';
 
-interface AuthInputProps extends InputProps {
+interface FormInputProps extends InputProps {
   label: string;
   name: string;
   type?: 'email' | 'password' | 'text';
 }
 
-const AuthInput = ({
+const FormInput = ({
   label,
   type,
   isRequired,
   name,
   isDisabled,
+  control,
   ...rest
-}: AuthInputProps) => {
-  const [field, { error, touched }] = useField(name);
+}: UseControllerProps<FormInputProps>) => {
+  const {
+    field,
+    fieldState: { isTouched, error },
+  } = useController({
+    name,
+    control,
+  });
   const { value: show, toggle } = useToggle(type === 'password');
   const Wrapper = type === 'password' ? InputGroup : Fragment;
-  const isInvalid = Boolean(error && touched);
+  const isInvalid = Boolean(error && isTouched);
   return (
     <FormControl
       isInvalid={isInvalid}
@@ -58,9 +65,9 @@ const AuthInput = ({
           </InputRightElement>
         )}
       </Wrapper>
-      <FormErrorMessage>{error}</FormErrorMessage>
+      <FormErrorMessage>{error && error.message}</FormErrorMessage>
     </FormControl>
   );
 };
 
-export default AuthInput;
+export default FormInput;

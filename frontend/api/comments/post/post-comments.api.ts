@@ -39,6 +39,9 @@ export const paginateComments = async (details: GetCommentsDetails) => {
           author {
             id
             name
+            picture {
+              filePath
+            }
           }
           createdAt
           children {
@@ -57,6 +60,9 @@ export const paginateComments = async (details: GetCommentsDetails) => {
             author {
               id
               name
+              picture {
+                filePath
+              }
             }
             createdAt
           }

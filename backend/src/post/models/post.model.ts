@@ -30,4 +30,12 @@ export class Post {
   author: User;
   @Field(() => FileUpload, { description: 'The picture of the post' })
   picture: FileUpload;
+  @Field(() => Int, {
+    description: 'Amount of likes of the post',
+  })
+  likesCount: number;
+  @Field(() => Int, {
+    description: "Amount of the post's comments",
+  })
+  commentsCount: number;
 }

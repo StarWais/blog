@@ -1,3 +1,5 @@
+import { Post } from 'src/post/models/post.model';
+import { PostService } from './../post/post.service';
 import { GetCommentsArgs } from './dto/args/get-comments.args';
 import { CommentLikeService } from './comment-like.service';
 import { ReplyToCommentInput } from './dto/inputs/reply-to-comment.input';
@@ -28,6 +30,7 @@ export class CommentResolver {
     private readonly commentService: CommentService,
     private readonly commentLikeService: CommentLikeService,
     private readonly userService: UserService,
+    private readonly postService: PostService,
   ) {}
 
   @Query(() => PaginatedComment)
@@ -91,5 +94,9 @@ export class CommentResolver {
   @ResolveField('children', () => [Comment])
   replies(@Parent() comment: Comment) {
     return this.commentService.getReplies(comment.id);
+  }
+  @ResolveField('post', () => Post)
+  post(@Parent() comment: Comment) {
+    return this.postService.getPost({ id: comment.postId });
   }
 }

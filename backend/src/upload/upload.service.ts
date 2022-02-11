@@ -65,4 +65,14 @@ export class UploadService {
     }
     return file;
   }
+
+  async getMyUploads(user: User) {
+    return this.prisma.upload.findMany({
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+    });
+  }
 }

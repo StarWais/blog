@@ -1,20 +1,23 @@
 import { createAction, createSlice } from '@reduxjs/toolkit';
 
 import { User } from '../../types/User';
-import { getMe, logIn, signUp } from './auth.thunks';
+import { LoadingState } from '../store';
+import { getMe, logIn, signUp, updateAvatar } from './auth.thunks';
 
-interface PostsState {
+interface AuthState {
   currentUser: User | null;
   isFetchingUser: boolean;
   isAuthorizing: boolean;
+  isUpdatingAvatar: LoadingState;
   isError: boolean;
   error: string;
 }
 
-const initialState: PostsState = {
+const initialState: AuthState = {
   currentUser: null,
   isFetchingUser: false,
   isAuthorizing: false,
+  isUpdatingAvatar: 'idle',
   isError: false,
   error: '',
 };
@@ -67,6 +70,16 @@ export const authSlice = createSlice({
       .addCase(getMe.fulfilled, (state, action) => {
         state.currentUser = action.payload;
         state.isFetchingUser = false;
+      })
+      .addCase(updateAvatar.pending, (state) => {
+        state.isUpdatingAvatar = 'pending';
+      })
+      .addCase(updateAvatar.fulfilled, (state, action) => {
+        state.isUpdatingAvatar = 'succeeded';
+        state.currentUser = {
+          ...state.currentUser,
+          picture: action.payload,
+        };
       })
       .addCase(logIn.fulfilled, (state, action) => {
         if (window !== undefined) {

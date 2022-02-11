@@ -172,4 +172,34 @@ export class PostService {
       },
     });
   }
+  async getPostLikesCount(postId: number) {
+    const likesCount = await this.prisma.post.findUnique({
+      where: {
+        id: postId,
+      },
+      include: {
+        _count: {
+          select: {
+            likes: true,
+          },
+        },
+      },
+    });
+    return likesCount._count.likes;
+  }
+  async getPostCommentsCount(postId: number) {
+    const likesCount = await this.prisma.post.findUnique({
+      where: {
+        id: postId,
+      },
+      include: {
+        _count: {
+          select: {
+            comments: true,
+          },
+        },
+      },
+    });
+    return likesCount._count.comments;
+  }
 }

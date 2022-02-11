@@ -1,7 +1,7 @@
 import { Box, HStack, VStack } from '@chakra-ui/react';
 import Moment from 'react-moment';
-import removeMd from 'remove-markdown';
 import { PostType } from '.';
+import { getParsedContent } from '../../utils/helpers';
 import NextLink from '../NextLink';
 
 interface PostContentProps {
@@ -37,7 +37,6 @@ const PostContent = ({
     }
     return 5;
   };
-  const parsedContent = removeMd(content);
   return (
     <VStack
       align="start"
@@ -55,11 +54,7 @@ const PostContent = ({
         <Box fontSize={getTitleSize()} fontWeight="bold">
           {title}
         </Box>
-        <Box color="gray.500">
-          {parsedContent.length > 250
-            ? `${parsedContent.slice(0, 250)}...`
-            : parsedContent}
-        </Box>
+        <Box color="gray.500">{getParsedContent(content)}</Box>
       </VStack>
       <HStack justify="space-between" w="full">
         <Moment date={new Date(createdAt)} format="MMM Do YYYY" />

@@ -1,3 +1,5 @@
+import { Post } from './Post';
+
 export interface Comment {
   id: number;
   content: string;
@@ -12,6 +14,7 @@ export interface Comment {
   replyUser?: User;
   children: Comment[];
   likes: CommentLike[];
+  post: Post;
 }
 
 export interface CommentLike {

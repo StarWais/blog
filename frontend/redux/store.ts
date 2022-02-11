@@ -10,6 +10,7 @@ import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 import { postCommentsSlice } from './comments/post/post-comments.slice';
 import { authSlice } from './auth/auth.slice';
 import { postsSlice } from './posts/post.slice';
+import { uploadsSlice } from './uploads/uploads.slice';
 
 const makeStore = () =>
   configureStore({
@@ -17,6 +18,7 @@ const makeStore = () =>
       posts: postsSlice.reducer,
       auth: authSlice.reducer,
       postComments: postCommentsSlice.reducer,
+      uploads: uploadsSlice.reducer,
     },
     devTools: true,
   });

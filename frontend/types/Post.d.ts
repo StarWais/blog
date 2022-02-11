@@ -11,4 +11,6 @@ export interface Post {
   authorId: number;
   author: User;
   picture: Picture;
+  likesCount: number;
+  commentsCount: number;
 }

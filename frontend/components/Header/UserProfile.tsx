@@ -29,9 +29,12 @@ const UserProfile = ({ name, role, picture, id }: User) => {
 
       <MenuList>
         {role === Role.ADMIN && (
-          <MenuItem>
-            <NextLink href="/admin">Admin panel</NextLink>
-          </MenuItem>
+          <>
+            <MenuItem>
+              <NextLink href="/admin">Admin panel</NextLink>
+            </MenuItem>
+            <MenuDivider />
+          </>
         )}
         <MenuItem>
           <NextLink href={`/profile/${id}`}>My profile</NextLink>

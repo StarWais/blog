@@ -17,12 +17,13 @@ import { getPostBySlug } from '../../redux/posts/post.thunks';
 import { useAppSelector } from '../../hooks';
 import { getCurrentPost } from '../../redux/posts/posts.selectors';
 import PostComments from '../../components/pages/Post/PostComments';
+import { PageProps } from '../_app';
 
 interface IParams extends NextParsedUrlQuery {
   slug: string;
 }
 
-const Post: NextPage = () => {
+const Post: NextPage<PageProps> = () => {
   const post = useAppSelector(getCurrentPost);
   const router = useRouter();
 

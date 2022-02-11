@@ -5,7 +5,7 @@ import {
   InputGroup,
   InputLeftElement,
 } from '@chakra-ui/react';
-import { Field, Form, Formik } from 'formik';
+import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import { FaSearch } from 'react-icons/fa';
 
@@ -13,37 +13,33 @@ const Search = () => {
   interface SearchFormData {
     query: string;
   }
-  const initialValues: SearchFormData = {
-    query: '',
-  };
   const router = useRouter();
 
-  const handleSubmit = ({ query }: SearchFormData) => {
+  const onSubmit = ({ query }: SearchFormData) => {
     const urlEncodedSearchText = encodeURIComponent(query);
     router.push(`/search?search=${urlEncodedSearchText}`);
   };
 
+  const { register, handleSubmit } = useForm<SearchFormData>();
+
   return (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-      <Form>
-        <Field name="query">
-          {/* @ts-ignore */}
-          {({ field }) => (
-            <FormControl>
-              <FormLabel htmlFor="query" srOnly>
-                Search query
-              </FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <FaSearch color="gray.500" />
-                </InputLeftElement>
-                <Input {...field} placeholder="Search..." variant="outline" />
-              </InputGroup>
-            </FormControl>
-          )}
-        </Field>
-      </Form>
-    </Formik>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormControl>
+        <FormLabel htmlFor="query" srOnly>
+          Search query
+        </FormLabel>
+        <InputGroup>
+          <InputLeftElement pointerEvents="none">
+            <FaSearch color="gray.500" />
+          </InputLeftElement>
+          <Input
+            {...register('query')}
+            placeholder="Search..."
+            variant="outline"
+          />
+        </InputGroup>
+      </FormControl>
+    </form>
   );
 };
 

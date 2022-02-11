@@ -3,7 +3,7 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../guards/gql-auth.guard';
 import { User } from '../user/models/user.model';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { FileUpload as FileUploadModel } from './models/upload.model';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
 
@@ -17,5 +17,11 @@ export class UploadResolver {
     @CurrentUser() currentUser: User,
   ) {
     return this.uploadService.uploadPicture(fileDetails, currentUser);
+  }
+  @UseGuards(GqlAuthGuard)
+  @Query(() => [FileUploadModel])
+  async getMyUploads(@CurrentUser() currentUser: User) {
+    const uploads = await this.uploadService.getMyUploads(currentUser);
+    return uploads;
   }
 }

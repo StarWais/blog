@@ -1,20 +1,22 @@
+import { Roles } from './../decorators/roles.decorator';
 import { FileUpload } from './../upload/models/upload.model';
 import { CurrentUser } from './../decorators/current-user.decorator';
 import { GqlAuthGuard } from './../guards/gql-auth.guard';
 import {
   Args,
-  Int,
   Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { User } from './models/user.model';
+import { User, Role } from './models/user.model';
 import { UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserInput } from './dto/inputs/update-user.input';
 import { GetUserArgs } from './dto/args/get-user.args';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { UpdateUserAvatarInput } from './dto/inputs/update-user-avatar.input';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -35,10 +37,28 @@ export class UserResolver {
     return updatedUser;
   }
 
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => FileUpload)
+  async updateMyAvatar(
+    @Args('details') details: UpdateUserAvatarInput,
+    @CurrentUser() currentUser: User,
+  ) {
+    const avatar = await this.userService.updateMyAvatar(details, currentUser);
+    return avatar;
+  }
+
   @Query(() => User)
-  async getProfile(@Args() getUserArgs: GetUserArgs) {
-    const profile = await this.userService.getUserById(getUserArgs.id);
-    return profile;
+  @UseGuards(GqlAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  async getUser(@Args() getUserArgs: GetUserArgs) {
+    const user = await this.userService.getUserById(getUserArgs.id);
+    return user;
+  }
+
+  @Query(() => Boolean)
+  async checkEmailAvailiabiluty(@Args('email') email: string) {
+    const emailExists = await this.userService.emailUserExists(email);
+    return emailExists;
   }
 
   @ResolveField('picture', () => FileUpload)
@@ -48,16 +68,5 @@ export class UserResolver {
       id: currentUser.pictureId,
     });
     return avatar;
-  }
-
-  @ResolveField('likesCount', () => Int)
-  async getLikesCount(@Parent() currentUser: User) {
-    const count = await this.userService.getTotalLikesCount(currentUser.id);
-    return count;
-  }
-  @ResolveField('commentsCount', () => Int)
-  async getCommentsCount(@Parent() currentUser: User) {
-    const count = await this.userService.getTotalCommentsCount(currentUser.id);
-    return count;
   }
 }

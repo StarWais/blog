@@ -32,6 +32,9 @@ type Comment {
   """Parent comment id"""
   parent: Int
 
+  """Post to which this comment is attached"""
+  post: Post!
+
   """Post id"""
   postId: Int!
 
@@ -125,6 +128,7 @@ type Mutation {
   refreshToken(refreshTokenDetails: RefreshTokenInput!): Token!
   replyToComment(details: ReplyToCommentInput!): Comment!
   signUp(signupDetails: SignUpInput!): Auth!
+  updateMyAvatar(details: UpdateUserAvatarInput!): FileUpload!
 
   """Update a post"""
   updatePost(details: UpdatePostInput!, id: Int!): Post!
@@ -157,6 +161,9 @@ type Post {
   """The unique identifier of the author of the post"""
   authorId: Int!
 
+  """Amount of the post's comments"""
+  commentsCount: Int!
+
   """Post's content"""
   content: String!
 
@@ -165,6 +172,9 @@ type Post {
 
   """The unique identifier of the post"""
   id: Int!
+
+  """Amount of likes of the post"""
+  likesCount: Int!
 
   """The picture of the post"""
   picture: FileUpload!
@@ -185,6 +195,30 @@ type Post {
   updatedAt: Timestamp!
 }
 
+type Profile {
+  commentsCount: Int!
+
+  """User's description"""
+  description: String
+
+  """The unique identifier of the user"""
+  id: Int!
+
+  """Users's last active date"""
+  lastActivedAt: Timestamp!
+  likesCount: Int!
+
+  """User's name"""
+  name: String!
+  picture: FileUpload!
+
+  """User's avatar id"""
+  pictureId: Int
+  postsCount: Int!
+  recentComments: [Comment!]!
+  recentPosts: [Post!]!
+}
+
 type Query {
   """Get all posts"""
   allPosts(
@@ -194,6 +228,7 @@ type Query {
     """Current page"""
     page: Int!
   ): PaginatedPost!
+  checkEmailAvailiabiluty(email: String!): Boolean!
   comments(
     """Current page"""
     limit: Int = 10
@@ -205,7 +240,9 @@ type Query {
     postId: Int!
   ): PaginatedComment!
   getMe: User!
-  getProfile(id: Int!): User!
+  getMyUploads: [FileUpload!]!
+  getProfile(id: Int!): Profile!
+  getUser(id: Int!): User!
 
   """Get a post by id or slug"""
   post(
@@ -278,6 +315,11 @@ input UpdatePostInput {
   title: String!
 }
 
+input UpdateUserAvatarInput {
+  """User name"""
+  pictureId: Int
+}
+
 input UpdateUserInput {
   """User description"""
   description: String
@@ -290,16 +332,14 @@ input UpdateUserInput {
 
   """User name"""
   name: String
-
-  """User name"""
-  pictureId: Int
 }
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
 type User {
-  commentsCount: Int!
+  """Users's creation date"""
+  createdAt: Timestamp!
 
   """User's description"""
   description: String
@@ -312,7 +352,6 @@ type User {
 
   """Users's last active date"""
   lastActivedAt: Timestamp!
-  likesCount: Int!
 
   """User's name"""
   name: String!
@@ -322,9 +361,6 @@ type User {
 
   """User's avatar id"""
   pictureId: Int
-
-  """User's posts"""
-  posts: [Post!]!
 
   """User's role"""
   role: Role!

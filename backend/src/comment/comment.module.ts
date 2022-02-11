@@ -1,3 +1,4 @@
+import { PostModule } from './../post/post.module';
 import { UserModule } from './../user/user.module';
 import { Module } from '@nestjs/common';
 
@@ -8,7 +9,7 @@ import { CommentLikeService } from './comment-like.service';
 import { CommentLikeResolver } from './comment-like.resolver';
 
 @Module({
-  imports: [UserModule],
+  imports: [UserModule, PostModule],
   providers: [
     CommentService,
     CommentResolver,

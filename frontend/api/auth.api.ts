@@ -1,5 +1,6 @@
 import { gql } from 'graphql-request';
 import api from '../api/fetcher';
+import { Picture } from '../types/Picture';
 import { User } from '../types/User';
 
 export interface SignUpDetails {
@@ -10,6 +11,10 @@ export interface SignUpDetails {
 export interface LogInDetails {
   email: string;
   password: string;
+}
+
+export interface UpdateAvatarDetails {
+  pictureId: number;
 }
 
 export interface AuthResponse {
@@ -55,6 +60,7 @@ export const logIn = async ({ email, password }: LogInDetails) => {
         user {
           id
           name
+          description
           email
           role
           picture {
@@ -80,6 +86,7 @@ export const getMe = async () => {
         id
         email
         name
+        description
         role
         picture {
           filePath
@@ -89,4 +96,21 @@ export const getMe = async () => {
   `;
   const response = await api.request(query);
   return response.getMe as User;
+};
+
+export const updateAvatar = async ({ pictureId }: UpdateAvatarDetails) => {
+  const query = gql`
+    mutation UpdateAvatar($details: UpdateUserAvatarInput!) {
+      updateMyAvatar(details: $details) {
+        filePath
+      }
+    }
+  `;
+  const variables = {
+    details: {
+      pictureId,
+    },
+  };
+  const response = await api.request(query, variables);
+  return response.updateMyAvatar as Picture;
 };

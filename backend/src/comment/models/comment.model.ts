@@ -1,3 +1,4 @@
+import { Post } from 'src/post/models/post.model';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { User } from './../../user/models/user.model';
 import { CommentLike } from './comment-like.model';
@@ -36,4 +37,6 @@ export class Comment {
   likes: CommentLike[];
   @Field(() => [Comment])
   children: Comment[];
+  @Field(() => Post, { description: 'Post to which this comment is attached' })
+  post: Post;
 }

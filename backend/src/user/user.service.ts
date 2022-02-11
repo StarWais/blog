@@ -3,12 +3,14 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { PrismaService } from './../prisma.service';
 import { UploadService } from './../upload/upload.service';
 import { UpdateUserInput } from './dto/inputs/update-user.input';
 import { Role, User } from './models/user.model';
+import { UpdateUserAvatarInput } from './dto/inputs/update-user-avatar.input';
 
 @Injectable()
 export class UserService {
@@ -99,6 +101,15 @@ export class UserService {
     });
     return commentsCount._count.comments;
   }
+  async getUserPostsCount(userId: number) {
+    const postsCount = await this.prisma.post.count({
+      where: {
+        authorId: userId,
+        published: true,
+      },
+    });
+    return postsCount;
+  }
 
   async getUserByEmail(email: string) {
     const user = await this.prisma.user.findUnique({
@@ -116,6 +127,19 @@ export class UserService {
     });
   }
 
+  async getUsersRecentPosts(userId: number) {
+    return this.prisma.post.findMany({
+      where: {
+        authorId: userId,
+        published: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 5,
+    });
+  }
+
   async updateLastActive(userId: number) {
     return this.prisma.user.update({
       where: { id: userId },
@@ -123,6 +147,43 @@ export class UserService {
         lastActivedAt: new Date(),
       },
     });
+  }
+
+  async getUserRecentComments(userId: number) {
+    return this.prisma.comment.findMany({
+      where: {
+        authorId: userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 5,
+    });
+  }
+
+  async updateMyAvatar(details: UpdateUserAvatarInput, currentUser: User) {
+    const userId = currentUser.id;
+    const upload = await this.uploadService.getPictureByIdWithPermissions(
+      details.pictureId,
+      currentUser,
+    );
+    const avatar = await this.getOrCreateUserAvatar(
+      {
+        uploadId: upload.id,
+      },
+      upload.id,
+    );
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        picture: {
+          connect: {
+            id: avatar.id,
+          },
+        },
+      },
+    });
+    return upload;
   }
 
   async updateUser(details: UpdateUserInput, currentUser?: User) {
@@ -136,38 +197,17 @@ export class UserService {
     } else {
       userId = currentUser.id;
     }
-    if (details.pictureId) {
-      const upload = await this.uploadService.getPictureByIdWithPermissions(
-        details.pictureId,
-        currentUser,
-      );
-      const avatar = await this.getOrCreateUserAvatar(
-        {
-          uploadId: upload.id,
-        },
-        upload.id,
-      );
-      return this.prisma.user.update({
-        where: { id: userId },
-        data: {
-          name: details.name,
-          email: details.email,
-          description: details.description,
-          picture: {
-            connect: {
-              id: avatar.id,
-            },
-          },
-        },
-      });
+    if (details.email) {
+      const emailExists = await this.emailUserExists(details.email);
+      if (emailExists) {
+        throw new BadRequestException(
+          `User with provided email already exists`,
+        );
+      }
     }
     return this.prisma.user.update({
       where: { id: userId },
-      data: {
-        name: details.name,
-        email: details.email,
-        description: details.description,
-      },
+      data: details,
     });
   }
 }

@@ -105,4 +105,16 @@ export class PostResolver {
     });
     return picture;
   }
+  @ResolveField('likesCount', () => Int)
+  async likesCount(@Parent() post: Post) {
+    const { id } = post;
+    const count = await this.postService.getPostLikesCount(id);
+    return count;
+  }
+  @ResolveField('commentsCount', () => Int)
+  async commentsCount(@Parent() post: Post) {
+    const { id } = post;
+    const count = await this.postService.getPostCommentsCount(id);
+    return count;
+  }
 }

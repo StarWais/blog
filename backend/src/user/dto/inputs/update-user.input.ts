@@ -37,10 +37,4 @@ export class UpdateUserInput {
   @IsNotEmpty()
   @Length(2, 255)
   name?: string;
-
-  @Field(() => Int, { description: 'User name', nullable: true })
-  @IsOptional()
-  @IsNumber()
-  @IsPositive()
-  pictureId?: number;
 }

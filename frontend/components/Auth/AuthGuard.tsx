@@ -13,7 +13,7 @@ const AuthGuard: FC<PageProps> = ({ children, admin }) => {
   const user = useAppSelector(getCurrentUser);
   const router = useRouter();
   const condition = useMemo(
-    () => user && (admin ? user.role === Role.ADMIN : true),
+    () => !!user && (admin ? user.role === Role.ADMIN : true),
     [user, admin]
   );
   const isFetching = useAppSelector(isFetchingUser);
