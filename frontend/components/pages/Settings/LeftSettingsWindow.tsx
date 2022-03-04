@@ -10,6 +10,7 @@ import {
 import moment from 'moment';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { updateAvatar } from '../../../redux/auth/auth.thunks';
+import { Picture } from '../../../types/Picture';
 import { User } from '../../../types/User';
 import { getUploadUrl } from '../../../utils/helpers';
 import UploadForm from '../../Modals/UploadModal';
@@ -24,10 +25,10 @@ const LeftSettingsWindow = ({ user }: LeftSettingsWindowProps) => {
     (state) => state.auth.isUpdatingAvatar === 'pending'
   );
   const dispatch = useAppDispatch();
-  const handleSubmit = (uploadId: number) => {
+  const handleSubmit = (upload: Picture) => {
     dispatch(
       updateAvatar({
-        pictureId: uploadId,
+        pictureId: upload.id,
       })
     );
   };

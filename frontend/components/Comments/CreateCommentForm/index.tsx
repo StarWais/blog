@@ -51,7 +51,14 @@ const CreateCommentForm = ({
 
   const handleFormSubmit = (data: CommentFormInputs) => {
     onSubmit(data);
-    reset();
+    reset(
+      {
+        content: '',
+      },
+      {
+        keepTouched: false,
+      }
+    );
   };
   return (
     <form

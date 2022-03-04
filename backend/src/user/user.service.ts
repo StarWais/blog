@@ -29,9 +29,24 @@ export class UserService {
     return user;
   }
 
+  async updatePassword(userId: number, password: string) {
+    const user = await this.getUserById(userId);
+    return this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password,
+      },
+    });
+  }
+
   async emailUserExists(email: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email: {
+          equals: email,
+          mode: 'insensitive',
+        },
+      },
     });
 
     return Boolean(user);
@@ -112,8 +127,13 @@ export class UserService {
   }
 
   async getUserByEmail(email: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email: {
+          equals: email,
+          mode: 'insensitive',
+        },
+      },
     });
     if (!user) {
       throw new NotFoundException(`User with provided email does not exist`);
@@ -186,7 +206,7 @@ export class UserService {
     return upload;
   }
 
-  async updateUser(details: UpdateUserInput, currentUser?: User) {
+  async updateUser(details: UpdateUserInput, currentUser: User) {
     let userId: number;
     if (details.id) {
       if (currentUser.role === Role.ADMIN) {
@@ -199,7 +219,10 @@ export class UserService {
     }
     if (details.email) {
       const emailExists = await this.emailUserExists(details.email);
-      if (emailExists) {
+      if (
+        emailExists &&
+        currentUser.email.toLowerCase() !== details.email.toLowerCase()
+      ) {
         throw new BadRequestException(
           `User with provided email already exists`,
         );

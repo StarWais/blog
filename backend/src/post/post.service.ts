@@ -15,6 +15,7 @@ import { UpdatePostInput } from './dto/inputs/update-post-input';
 
 import { CreatePostInput } from './dto/inputs/create-post.input';
 import { GetPostArgs } from './dto/args/get-post-args';
+import { GetPublishedPostsArgs } from './dto/args/get-published-posts-args';
 
 @Injectable()
 export class PostService {
@@ -22,7 +23,6 @@ export class PostService {
     private readonly uploadService: UploadService,
     private readonly prisma: PrismaService,
   ) {}
-
   private generateSlug = (title: string) =>
     slugify(`${title} ${Date.now()}`, { lower: true });
   private async createPostPicture(uploadId: number) {
@@ -46,7 +46,11 @@ export class PostService {
     }
     return await this.createPostPicture(uploadId);
   }
-  async getPost(searchArgs: GetPostArgs, currentUser: User | null = null) {
+  async getPost(
+    searchArgs: GetPostArgs,
+    currentUser: User | null = null,
+    selectUnpublished = false,
+  ) {
     if (!searchArgs.id && !searchArgs.slug) {
       throw new BadRequestException('You must provide either an id or a slug');
     }
@@ -56,45 +60,106 @@ export class PostService {
       },
     });
 
-    if ((!post || !post.published) && currentUser?.role !== Role.ADMIN) {
+    if (
+      !post ||
+      (selectUnpublished
+        ? false
+        : !post.published &&
+          (post.authorId === currentUser?.id ||
+            currentUser?.role === Role.ADMIN))
+    ) {
       throw new NotFoundException(`Post with provided params not found`);
     }
     return post;
   }
-  getAllPosts(paginationArgs: PaginationArgs) {
-    return Paginate<PostModel>(paginationArgs, this.prisma, 'post', {
-      orderBy: [
-        {
-          published: 'desc',
-        },
-        {
-          createdAt: 'desc',
-        },
-      ],
-    });
-  }
-  getPublishedPosts(paginationArgs: PaginationArgs) {
-    return Paginate<PostModel>(paginationArgs, this.prisma, 'post', {
-      where: { published: true },
-      orderBy: {
-        createdAt: 'desc',
+  async publishPost(searchArgs: GetPostArgs, currentUser: User) {
+    const post = await this.getPost(searchArgs, currentUser);
+
+    return this.prisma.post.update({
+      where: { id: post.id },
+      data: {
+        published: true,
       },
     });
   }
-  async deletePost(id: number, currentUser: User) {
-    const post = await this.getPost({ id });
-    if (post.authorId !== currentUser.id) {
-      throw new BadRequestException('You are not the author of this post');
-    }
+  getAllPosts(paginationArgs: PaginationArgs) {
+    return Paginate<PostModel, Prisma.PostFindManyArgs>(
+      paginationArgs,
+      this.prisma,
+      'post',
+      {
+        orderBy: [
+          {
+            published: 'desc',
+          },
+          {
+            createdAt: 'desc',
+          },
+        ],
+      },
+    );
+  }
+  getPublishedPosts(getPublishedPostArgs: GetPublishedPostsArgs) {
+    const paginationArgs = {
+      page: getPublishedPostArgs.page,
+      limit: getPublishedPostArgs.limit,
+    };
+    const searchText =
+      getPublishedPostArgs.searchText === null
+        ? undefined
+        : getPublishedPostArgs.searchText;
+    const extendedSearchOptions: Prisma.PostWhereInput = searchText
+      ? {
+          OR: [
+            {
+              title: {
+                search: searchText,
+              },
+            },
+            {
+              content: {
+                search: searchText,
+              },
+            },
+          ],
+        }
+      : {};
+    return Paginate<PostModel, Prisma.PostFindManyArgs>(
+      paginationArgs,
+      this.prisma,
+      'post',
+      {
+        where: {
+          published: true,
+          ...extendedSearchOptions,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      },
+    );
+  }
+  getMyPosts(paginationArgs: PaginationArgs, currentUser: User) {
+    return Paginate<PostModel, Prisma.PostFindManyArgs>(
+      paginationArgs,
+      this.prisma,
+      'post',
+      {
+        where: { authorId: currentUser.id },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      },
+    );
+  }
+  async deletePost(searchArgs: GetPostArgs, currentUser: User) {
+    const post = await this.getPost(searchArgs, currentUser, true);
     return this.prisma.post.delete({
       where: { id: post.id },
     });
   }
   async updatePost(id: number, data: UpdatePostInput, currentUser: User) {
-    const post = await this.getPost({ id });
-    if (post.authorId !== currentUser.id) {
-      throw new BadRequestException('You are not the author of this post');
-    }
+    const post = await this.getPost({ id }, currentUser);
     if (data.pictureId) {
       const upload = await this.uploadService.getPictureByIdWithPermissions(
         data.pictureId,

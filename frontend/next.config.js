@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+
+const removeImports = require('next-remove-imports')({});
+
 const nextConfig = {
   reactStrictMode: true,
   eslint: {
@@ -7,6 +10,9 @@ const nextConfig = {
   images: {
     domains: ['localhost'],
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
-module.exports = nextConfig;
+module.exports = removeImports(nextConfig);

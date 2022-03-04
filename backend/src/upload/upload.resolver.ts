@@ -6,6 +6,7 @@ import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { FileUpload as FileUploadModel } from './models/upload.model';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
+import { DeleteUploadArgs } from './dto/args/delete-upload.args';
 
 @Resolver(() => FileUploadModel)
 export class UploadResolver {
@@ -23,5 +24,14 @@ export class UploadResolver {
   async getMyUploads(@CurrentUser() currentUser: User) {
     const uploads = await this.uploadService.getMyUploads(currentUser);
     return uploads;
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => FileUploadModel)
+  async deleteUpload(
+    @Args() { id }: DeleteUploadArgs,
+    @CurrentUser() currentUser: User,
+  ) {
+    return this.uploadService.deleteUpload(id, currentUser);
   }
 }

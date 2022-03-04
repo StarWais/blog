@@ -29,8 +29,8 @@ interface SignupFormDetails extends SignUpDetails {
 
 const SignupModal = ({ isOpen, onClose }: SignupFormProps) => {
   const dispatch = useAppDispatch();
-  const isError = useAppSelector((state) => state.auth.isError);
-  const error = useAppSelector((state) => state.auth.error);
+  const isError = useAppSelector((state) => state.auth.isAuthError);
+  const error = useAppSelector((state) => state.auth.authError);
   const isLoggingIn = useAppSelector((state) => state.auth.isAuthorizing);
 
   const initialValues: SignupFormDetails = {

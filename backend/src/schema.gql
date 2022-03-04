@@ -11,6 +11,14 @@ type Auth {
   user: User!
 }
 
+input ChangePasswordInput {
+  """User's new password"""
+  newPassword: String!
+
+  """User's current password"""
+  oldPassword: String!
+}
+
 type Comment {
   """Comment's author"""
   author: User!
@@ -82,6 +90,9 @@ input DeleteCommentInput {
 }
 
 type FileUpload {
+  """Is this upload attached to any post or user avatar"""
+  attached: Boolean!
+
   """Picture's creation date"""
   createdAt: Timestamp!
 
@@ -115,6 +126,7 @@ input LoginInput {
 }
 
 type Mutation {
+  changePassword(changePasswordDetails: ChangePasswordInput!): User!
   createComment(details: CreateCommentInput!): Comment!
 
   """Create a new post"""
@@ -122,9 +134,28 @@ type Mutation {
   deleteComment(details: DeleteCommentInput!): Comment!
 
   """Delete a post"""
-  deletePost(id: Int!): Int!
+  deletePost(
+    """ID of the post"""
+    id: Int
+
+    """Slug of the post"""
+    slug: String
+  ): Post!
+  deleteUpload(
+    """Id of the upload"""
+    id: Int!
+  ): FileUpload!
   likeComment(details: LikeCommentInput!): CommentLike!
   logIn(loginDetails: LoginInput!): Auth!
+
+  """Publish a post"""
+  publish(
+    """ID of the post"""
+    id: Int
+
+    """Slug of the post"""
+    slug: String
+  ): Post!
   refreshToken(refreshTokenDetails: RefreshTokenInput!): Token!
   replyToComment(details: ReplyToCommentInput!): Comment!
   signUp(signupDetails: SignUpInput!): Auth!
@@ -210,7 +241,7 @@ type Profile {
 
   """User's name"""
   name: String!
-  picture: FileUpload!
+  picture: FileUpload
 
   """User's avatar id"""
   pictureId: Int
@@ -228,7 +259,6 @@ type Query {
     """Current page"""
     page: Int!
   ): PaginatedPost!
-  checkEmailAvailiabiluty(email: String!): Boolean!
   comments(
     """Current page"""
     limit: Int = 10
@@ -239,10 +269,20 @@ type Query {
     """Post id"""
     postId: Int!
   ): PaginatedComment!
+  emailExists(email: String!): Boolean!
   getMe: User!
   getMyUploads: [FileUpload!]!
   getProfile(id: Int!): Profile!
   getUser(id: Int!): User!
+
+  """Get your posts posts"""
+  myPosts(
+    """Current page"""
+    limit: Int = 10
+
+    """Current page"""
+    page: Int!
+  ): PaginatedPost!
 
   """Get a post by id or slug"""
   post(
@@ -260,6 +300,9 @@ type Query {
 
     """Current page"""
     page: Int!
+
+    """Search Text"""
+    searchText: String
   ): PaginatedPost!
 }
 
@@ -310,9 +353,9 @@ type Token {
 }
 
 input UpdatePostInput {
-  content: String!
-  pictureId: Int!
-  title: String!
+  content: String
+  pictureId: Int
+  title: String
 }
 
 input UpdateUserAvatarInput {

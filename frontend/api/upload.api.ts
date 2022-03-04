@@ -35,3 +35,17 @@ export const uploadFile = async (file: File) => {
   const response = await api.request(query, { file });
   return response.uploadFile as Picture;
 };
+export const deleteUpload = async (id: number) => {
+  const query = gql`
+    mutation DeleteUpload($deleteUploadId: Int!) {
+      deleteUpload(id: $deleteUploadId) {
+        id
+      }
+    }
+  `;
+  const variables = {
+    deleteUploadId: id,
+  };
+  const response = await api.request(query, variables);
+  return response.deleteUpload as { id: number };
+};

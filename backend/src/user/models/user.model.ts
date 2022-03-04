@@ -1,5 +1,11 @@
 import { FileUpload } from './../../upload/models/upload.model';
-import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  HideField,
+  Int,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 export enum Role {
   ADMIN = 'ADMIN',
@@ -21,10 +27,12 @@ export class User {
   name: string;
   @Field(() => Int, { description: "User's avatar id", nullable: true })
   pictureId?: number;
-  @Field({ description: "Users's avatar", nullable: true })
+  @Field(() => FileUpload, { description: "Users's avatar", nullable: true })
   picture?: FileUpload;
   @Field(() => Role, { description: "User's role" })
   role: Role;
+  @HideField()
+  password: string;
   @Field({ description: "Users's last active date" })
   lastActivedAt: Date;
   @Field({ description: "Users's creation date" })

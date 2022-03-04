@@ -56,12 +56,12 @@ export class UserResolver {
   }
 
   @Query(() => Boolean)
-  async checkEmailAvailiabiluty(@Args('email') email: string) {
+  async emailExists(@Args('email') email: string) {
     const emailExists = await this.userService.emailUserExists(email);
     return emailExists;
   }
 
-  @ResolveField('picture', () => FileUpload)
+  @ResolveField('picture', () => FileUpload, { nullable: true })
   async picture(@Parent() currentUser: User) {
     if (!currentUser.pictureId) return null;
     const avatar = await this.userService.getUserAvatarUpload({

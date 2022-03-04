@@ -41,11 +41,11 @@ export function Paginated<T>(classRef: Type<T>): Type<IPaginatedType<T>> {
   return PaginatedType as Type<IPaginatedType<T>>;
 }
 
-export async function Paginate<T>(
+export async function Paginate<T, U>(
   paginationArgs: PaginationArgs,
   prismaClient: PrismaService,
   entity: string,
-  args: any,
+  args: U,
 ): Promise<IPaginatedType<T> | null> {
   const take = paginationArgs.limit || 10;
   const skip = (paginationArgs.page - 1) * take;

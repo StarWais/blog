@@ -13,8 +13,18 @@ export interface LogInDetails {
   password: string;
 }
 
+export interface ChangePasswordDetails {
+  oldPassword: string;
+  newPassword: string;
+}
+
 export interface UpdateAvatarDetails {
   pictureId: number;
+}
+export interface UpdateMeDetails {
+  name: string;
+  description?: string;
+  email?: string;
 }
 
 export interface AuthResponse {
@@ -113,4 +123,60 @@ export const updateAvatar = async ({ pictureId }: UpdateAvatarDetails) => {
   };
   const response = await api.request(query, variables);
   return response.updateMyAvatar as Picture;
+};
+
+export const updateMe = async (details: UpdateMeDetails) => {
+  const query = gql`
+    mutation UpdateUser($details: UpdateUserInput!) {
+      updateUser(details: $details) {
+        id
+        email
+        name
+        description
+        role
+        picture {
+          filePath
+        }
+      }
+    }
+  `;
+  const variables = {
+    details,
+  };
+  const response = await api.request(query, variables);
+  return response.updateUser as User;
+};
+
+export const emailExists = async (email: string) => {
+  const query = gql`
+    query EmailExists($email: String!) {
+      emailExists(email: $email)
+    }
+  `;
+  const variables = {
+    email,
+  };
+  const response = await api.request(query, variables);
+  return response.emailExists as boolean;
+};
+
+export const changePassword = async (
+  changePasswordDetails: ChangePasswordDetails
+) => {
+  console.log(changePasswordDetails);
+  const query = gql`
+    mutation ChangePassword($changePasswordDetails: ChangePasswordInput!) {
+      changePassword(changePasswordDetails: $changePasswordDetails) {
+        id
+      }
+    }
+  `;
+  const variables = {
+    changePasswordDetails,
+  };
+
+  const response = await api.request(query, variables);
+  return response.changePassword as {
+    id: number;
+  };
 };

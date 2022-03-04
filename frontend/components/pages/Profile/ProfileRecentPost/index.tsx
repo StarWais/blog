@@ -12,7 +12,7 @@ interface ProfileStatsProps {
 
 const ProfileRecentPost = ({ post }: ProfileStatsProps) => {
   return (
-    <LinkBox as="article" shadow="md" p={8} rounded="lg">
+    <LinkBox as="article" shadow="md" p={8} rounded="lg" w="full">
       <Heading as="h3" size="md" fontWeight="semibold" mb={2}>
         <NextOverlayLink href={`/articles/${post.slug}`}>
           {post.title}

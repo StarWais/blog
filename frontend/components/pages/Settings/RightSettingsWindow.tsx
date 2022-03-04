@@ -8,6 +8,7 @@ import {
   TabPanel,
 } from '@chakra-ui/react';
 import { User } from '../../../types/User';
+import ChangePasswordForm from './ChangePasswordForm';
 import EditProfileForm from './EditProfileForm';
 
 interface RightSettingsWindowProps {
@@ -32,7 +33,9 @@ const RightSettingsWindow = ({ user }: RightSettingsWindowProps) => {
             <TabPanel>
               <EditProfileForm user={user} />
             </TabPanel>
-            <TabPanel>Edit password</TabPanel>
+            <TabPanel>
+              <ChangePasswordForm />
+            </TabPanel>
           </TabPanels>
         </Tabs>
       </Box>

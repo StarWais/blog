@@ -35,6 +35,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { id } = ctx.params as IParams;
   try {
     const profile = await getProfile({ id: Number(id) });
+
     if (!profile) {
       return {
         notFound: true,

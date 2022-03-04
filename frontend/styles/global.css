@@ -5,3 +5,7 @@ div#__next {
   flex-direction: column;
   width: 100%;
 }
+
+html {
+  overflow: auto !important;
+}

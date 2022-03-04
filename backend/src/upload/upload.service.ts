@@ -6,6 +6,7 @@ import { Role, User } from './../user/models/user.model';
 import * as Sharp from 'sharp';
 import { uuid } from 'uuidv4';
 import { join } from 'path';
+import { unlink } from 'fs/promises';
 
 @Injectable()
 export class UploadService {
@@ -48,12 +49,28 @@ export class UploadService {
     });
   }
 
+  async deleteFile(fileName: string) {
+    const filePath = join(process.cwd(), '..', '/uploads', fileName);
+    await unlink(filePath);
+  }
+
   async getPictureByIdWithPermissions(pictureId: number, user: User) {
     const file = await this.getPictureById(pictureId);
     if (file.userId !== user.id && user.role !== Role.ADMIN) {
       throw new NotFoundException('You are not the author of this file');
     }
     return file;
+  }
+
+  async deleteUpload(id: number, user: User) {
+    const file = await this.getPictureByIdWithPermissions(id, user);
+    const deletedFile = await this.prisma.upload.delete({
+      where: {
+        id: file.id,
+      },
+    });
+    await this.deleteFile(`${file.fileName}.${file.fileType}`);
+    return deletedFile;
   }
 
   async getPictureById(id: number) {

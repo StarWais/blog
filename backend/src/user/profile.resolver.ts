@@ -46,7 +46,7 @@ export class ProfileResolver {
     );
     return comments;
   }
-  @ResolveField('picture', () => FileUpload)
+  @ResolveField('picture', () => FileUpload, { nullable: true })
   async picture(@Parent() currentUser: User) {
     if (!currentUser.pictureId) return null;
     const avatar = await this.userService.getUserAvatarUpload({

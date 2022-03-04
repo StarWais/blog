@@ -1,9 +1,23 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  isFulfilled,
+  isPending,
+  isRejected,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 import _ from 'lodash';
 
 import { hydrate } from '../store';
 import { Post } from '../../types/Post';
-import { getPostBySlug, paginatePublishedPosts } from './post.thunks';
+import {
+  createPost,
+  deletePost,
+  getPostBySlug,
+  paginateMyPosts,
+  paginatePublishedPosts,
+  publishPost,
+  updatePost,
+} from './post.thunks';
 import { LoadingState } from './../store';
 import { Paginated } from '../../types/Pagination';
 
@@ -12,10 +26,17 @@ interface PostsState {
   currentPost: Post | null;
   loadingPosts: LoadingState;
   loadingPost: LoadingState;
+  editablePost: Post | null;
+  creatingUpdatingPost: LoadingState;
+  publishingPost: LoadingState;
+  publishingPostId: number | null;
+  deletingPostId: number | null;
+  deletingPost: LoadingState;
 }
 
 const initialState: PostsState = {
   currentPost: null,
+  editablePost: null,
   paginatedResults: {
     nodes: [],
     pageInfo: {
@@ -28,12 +49,44 @@ const initialState: PostsState = {
   },
   loadingPosts: 'idle',
   loadingPost: 'idle',
+  publishingPost: 'idle',
+  publishingPostId: null,
+  creatingUpdatingPost: 'idle',
+  deletingPost: 'idle',
+  deletingPostId: null,
 };
+
+const isLoadingPosts = isPending(paginatePublishedPosts, paginateMyPosts);
+const isCreatingUpdatingPost = isPending(createPost, updatePost);
+
+const isFetchedPosts = isFulfilled(paginatePublishedPosts, paginateMyPosts);
+const isCreatedUpdatedPost = isFulfilled(createPost, updatePost);
+
+const isRejectedPosts = isRejected(paginatePublishedPosts, paginateMyPosts);
 
 export const postsSlice = createSlice({
   name: 'posts',
   initialState,
-  reducers: {},
+  reducers: {
+    reset: (state) => {
+      state.paginatedResults = {
+        nodes: [],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          totalPages: 0,
+          currentPage: 0,
+          totalCount: 0,
+        },
+      };
+    },
+    setEditblePost: (state, action: PayloadAction<Post | null>) => {
+      state.editablePost = action.payload;
+    },
+    resetLoadingState: (state) => {
+      state.creatingUpdatingPost = 'idle';
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(hydrate, (state, action) => {
@@ -42,10 +95,60 @@ export const postsSlice = createSlice({
           ...action.payload[postsSlice.name],
         };
       })
-      .addCase(paginatePublishedPosts.pending, (state) => {
+      .addCase(getPostBySlug.fulfilled, (state, action) => {
+        state.loadingPost = 'succeeded';
+        state.currentPost = action.payload;
+      })
+      .addCase(publishPost.pending, (state, action) => {
+        state.publishingPost = 'pending';
+        state.publishingPostId = action.meta.arg;
+      })
+      .addCase(deletePost.pending, (state, action) => {
+        state.deletingPost = 'pending';
+        state.deletingPostId = action.meta.arg;
+      })
+      .addCase(deletePost.fulfilled, (state, action) => {
+        state.paginatedResults.nodes = state.paginatedResults.nodes.filter(
+          (post) => post.id !== action.payload.id
+        );
+        state.deletingPost = 'succeeded';
+        state.deletingPostId = null;
+      })
+      .addCase(publishPost.fulfilled, (state, action) => {
+        state.paginatedResults.nodes = state.paginatedResults.nodes.map(
+          (post) => {
+            if (post.id === action.payload.id) {
+              return {
+                ...post,
+                published: true,
+              };
+            }
+            return post;
+          }
+        );
+        state.publishingPost = 'succeeded';
+        state.publishingPostId = null;
+      })
+      .addCase(createPost.fulfilled, (state, action) => {
+        state.paginatedResults.nodes = [
+          action.payload,
+          ...state.paginatedResults.nodes,
+        ];
+      })
+      .addCase(updatePost.fulfilled, (state, action) => {
+        state.paginatedResults.nodes = state.paginatedResults.nodes.map(
+          (post) => {
+            if (post.id === action.payload.id) {
+              return action.payload;
+            }
+            return post;
+          }
+        );
+      })
+      .addMatcher(isLoadingPosts, (state) => {
         state.loadingPosts = 'pending';
       })
-      .addCase(paginatePublishedPosts.fulfilled, (state, action) => {
+      .addMatcher(isFetchedPosts, (state, action) => {
         state.paginatedResults = {
           nodes: _.uniqBy(
             [...state.paginatedResults.nodes, ...action.payload.nodes],
@@ -55,14 +158,19 @@ export const postsSlice = createSlice({
         };
         state.loadingPosts = 'succeeded';
       })
-      .addCase(paginatePublishedPosts.rejected, (state) => {
+      .addMatcher(isRejectedPosts, (state) => {
         state.loadingPosts = 'failed';
       })
-      .addCase(getPostBySlug.fulfilled, (state, action) => {
-        state.loadingPost = 'succeeded';
-        state.currentPost = action.payload;
+      .addMatcher(isCreatingUpdatingPost, (state) => {
+        state.creatingUpdatingPost = 'pending';
+      })
+      .addMatcher(isCreatedUpdatedPost, (state) => {
+        state.creatingUpdatingPost = 'succeeded';
+        state.editablePost = null;
       });
   },
 });
+
+export const { reset, setEditblePost, resetLoadingState } = postsSlice.actions;
 
 export default postsSlice.reducer;

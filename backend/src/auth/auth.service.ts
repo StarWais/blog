@@ -1,4 +1,3 @@
-import { Role } from './../user/models/user.model';
 import { JwtService } from '@nestjs/jwt';
 import {
   BadRequestException,
@@ -10,6 +9,8 @@ import { hash, compare } from 'bcrypt';
 import { UserService } from './../user/user.service';
 import { SignUpInput } from './dto/inputs/signup.input';
 import { LoginInput } from './dto/inputs/login.input';
+import { ChangePasswordInput } from './dto/inputs/change-password.input';
+import { User } from 'src/user/models/user.model';
 
 @Injectable()
 export class AuthService {
@@ -75,6 +76,20 @@ export class AuthService {
       refreshToken: this.generateRefreshToken(payload),
     };
   }
+  async changePassword(user: User, changePasswordInput: ChangePasswordInput) {
+    const { oldPassword, newPassword } = changePasswordInput;
+
+    const isPasswordValid = await this.validatePassword(
+      oldPassword,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new BadRequestException(`Invalid password`);
+    }
+    const newHashedPassword = await this.hashPassword(newPassword);
+    return this.userService.updatePassword(user.id, newHashedPassword);
+  }
+
   refreshToken(token: string) {
     try {
       const { userId } = this.jwtService.verify(token, {

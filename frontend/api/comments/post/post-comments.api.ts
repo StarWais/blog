@@ -76,7 +76,7 @@ export const paginateComments = async (details: GetCommentsDetails) => {
   `;
   const variables = details;
   const response = await api.request(query, variables);
-  console.log(response);
+
   return response.comments as Paginated<Comment>;
 };
 

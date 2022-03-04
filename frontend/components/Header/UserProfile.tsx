@@ -37,8 +37,12 @@ const UserProfile = ({ name, role, picture, id }: User) => {
           </>
         )}
         <MenuItem>
+          <NextLink href={`/dashboard`}>Dashboard</NextLink>
+        </MenuItem>
+        <MenuItem>
           <NextLink href={`/profile/${id}`}>My profile</NextLink>
         </MenuItem>
+
         <MenuItem>
           <NextLink href="/settings">Settings</NextLink>
         </MenuItem>

@@ -14,4 +14,6 @@ export class FileUpload {
   filePath: string;
   @Field({ description: "Picture's creation date" })
   createdAt: Date;
+  @Field({ description: 'Is this upload attached to any post or user avatar' })
+  attached: boolean;
 }

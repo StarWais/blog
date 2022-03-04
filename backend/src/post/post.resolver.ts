@@ -24,6 +24,7 @@ import { Post } from './models/post.model';
 import { PostService } from './post.service';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { Roles } from '../decorators/roles.decorator';
+import { GetPublishedPostsArgs } from './dto/args/get-published-posts-args';
 
 @Resolver(() => Post)
 export class PostResolver {
@@ -41,6 +42,15 @@ export class PostResolver {
     return post;
   }
 
+  @Mutation(() => Post, { description: 'Publish a post' })
+  async publish(
+    @Args() searchArgs: GetPostArgs,
+    @CurrentUser() currentUser: User,
+  ) {
+    const post = await this.postService.publishPost(searchArgs, currentUser);
+    return post;
+  }
+
   @Roles(Role.ADMIN)
   @UseGuards(GqlAuthGuard, RolesGuard)
   @Query(() => PaginatedPost, { description: 'Get all posts' })
@@ -50,15 +60,27 @@ export class PostResolver {
   }
 
   @Query(() => PaginatedPost, { description: 'Get all published posts' })
-  async publishedPosts(@Args() paginationArgs: PaginationArgs) {
+  async publishedPosts(@Args() getPublishedPostsArgs: GetPublishedPostsArgs) {
     const publishedPosts = await this.postService.getPublishedPosts(
-      paginationArgs,
+      getPublishedPostsArgs,
     );
     return publishedPosts;
   }
 
-  @Roles(Role.ADMIN)
-  @UseGuards(GqlAuthGuard, RolesGuard)
+  @UseGuards(GqlAuthGuard)
+  @Query(() => PaginatedPost, { description: 'Get your posts posts' })
+  async myPosts(
+    @Args() paginationArgs: PaginationArgs,
+    @CurrentUser() currentUser: User,
+  ) {
+    const myPosts = await this.postService.getMyPosts(
+      paginationArgs,
+      currentUser,
+    );
+    return myPosts;
+  }
+
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => Post, { description: 'Create a new post' })
   async createPost(
     @Args('details') details: CreatePostInput,
@@ -68,8 +90,7 @@ export class PostResolver {
     return post;
   }
 
-  @Roles(Role.ADMIN)
-  @UseGuards(GqlAuthGuard, RolesGuard)
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => Post, { description: 'Update a post' })
   async updatePost(
     @Args('id', { type: () => Int }) id: number,
@@ -80,15 +101,14 @@ export class PostResolver {
     return post;
   }
 
-  @Roles(Role.ADMIN)
-  @UseGuards(GqlAuthGuard, RolesGuard)
-  @Mutation(() => Int, { description: 'Delete a post' })
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Post, { description: 'Delete a post' })
   async deletePost(
-    @Args('id', { type: () => Int }) id: number,
+    @Args() searchArgs: GetPostArgs,
     @CurrentUser() currentUser: User,
   ) {
-    const post = await this.postService.deletePost(id, currentUser);
-    return post.id;
+    const post = await this.postService.deletePost(searchArgs, currentUser);
+    return post;
   }
 
   @ResolveField('author', () => User)

@@ -1,3 +1,5 @@
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from './../guards/gql-auth.guard';
 import { User } from './../user/models/user.model';
 import { RefreshTokenInput } from './dto/inputs/refresh-token-input.input';
 import { SignUpInput } from './dto/inputs/signup.input';
@@ -12,6 +14,8 @@ import { AuthService } from './auth.service';
 import { Auth } from './models/auth.model';
 import { Token } from './models/token.modal';
 import { LoginInput } from './dto/inputs/login.input';
+import { ChangePasswordInput } from './dto/inputs/change-password.input';
+import { CurrentUser } from 'src/decorators/current-user.decorator';
 
 @Resolver(() => Auth)
 export class AuthResolver {
@@ -37,5 +41,14 @@ export class AuthResolver {
   async user(@Parent() auth: Auth) {
     const user = await this.authService.getUserFromToken(auth.accessToken);
     return user;
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => User)
+  async changePassword(
+    @Args('changePasswordDetails') changePasswordDetails: ChangePasswordInput,
+    @CurrentUser() currentUser: User,
+  ) {
+    return this.authService.changePassword(currentUser, changePasswordDetails);
   }
 }

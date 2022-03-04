@@ -2,15 +2,27 @@ import { createAction, createSlice } from '@reduxjs/toolkit';
 
 import { User } from '../../types/User';
 import { LoadingState } from '../store';
-import { getMe, logIn, signUp, updateAvatar } from './auth.thunks';
+import {
+  changePassword,
+  checkEmailExists,
+  getMe,
+  logIn,
+  signUp,
+  updateAvatar,
+  updateMe,
+} from './auth.thunks';
 
 interface AuthState {
   currentUser: User | null;
   isFetchingUser: boolean;
   isAuthorizing: boolean;
   isUpdatingAvatar: LoadingState;
-  isError: boolean;
-  error: string;
+  isUpdatingUser: LoadingState;
+  isChangingPassword: LoadingState;
+  changingPasswordError: string;
+  isAuthError: boolean;
+  authError: string;
+  emailExists: boolean;
 }
 
 const initialState: AuthState = {
@@ -18,11 +30,15 @@ const initialState: AuthState = {
   isFetchingUser: false,
   isAuthorizing: false,
   isUpdatingAvatar: 'idle',
-  isError: false,
-  error: '',
+  isAuthError: false,
+  isUpdatingUser: 'idle',
+  authError: '',
+  emailExists: false,
+  isChangingPassword: 'idle',
+  changingPasswordError: '',
 };
 export const logOut = createAction('auth/logout');
-export const cleanError = createAction('auth/cleanError');
+export const cleanAuthError = createAction('auth/cleanAuthError');
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -37,29 +53,52 @@ export const authSlice = createSlice({
         }
         state.currentUser = null;
         state.isAuthorizing = false;
-        state.isError = false;
-        state.error = '';
+        state.isAuthError = false;
+        state.authError = '';
         state.isFetchingUser = false;
+        state.emailExists = false;
+        state.isChangingPassword = 'idle';
+        state.isUpdatingUser = 'idle';
+        state.isUpdatingAvatar = 'idle';
+        state.changingPasswordError = '';
       })
-      .addCase(cleanError, (state) => {
-        state.isError = false;
-        state.error = '';
+      .addCase(cleanAuthError, (state) => {
+        state.isAuthError = false;
+        state.authError = '';
       })
       .addCase(logIn.pending, (state) => {
         state.isAuthorizing = true;
       })
       .addCase(logIn.rejected, (state, action) => {
         state.isAuthorizing = false;
-        state.isError = true;
-        state.error = action.error.message || 'Something went wrong';
+        state.isAuthError = true;
+        state.authError = action.error.message || 'Something went wrong';
+      })
+      .addCase(logIn.fulfilled, (state, action) => {
+        if (window !== undefined) {
+          localStorage.setItem('accessToken', action.payload.accessToken);
+          localStorage.setItem('refreshToken', action.payload.refreshToken);
+        }
+        state.currentUser = action.payload.user;
+        state.isAuthorizing = false;
+        state.isAuthError = false;
       })
       .addCase(signUp.rejected, (state, action) => {
         state.isAuthorizing = false;
-        state.isError = true;
-        state.error = action.error.message || 'Something went wrong';
+        state.isAuthError = true;
+        state.authError = action.error.message || 'Something went wrong';
       })
       .addCase(signUp.pending, (state) => {
         state.isAuthorizing = true;
+      })
+      .addCase(signUp.fulfilled, (state, action) => {
+        if (window !== undefined) {
+          localStorage.setItem('accessToken', action.payload.accessToken);
+          localStorage.setItem('refreshToken', action.payload.refreshToken);
+        }
+        state.currentUser = action.payload.user;
+        state.isAuthorizing = false;
+        state.isAuthError = false;
       })
       .addCase(getMe.pending, (state) => {
         state.isFetchingUser = true;
@@ -77,27 +116,32 @@ export const authSlice = createSlice({
       .addCase(updateAvatar.fulfilled, (state, action) => {
         state.isUpdatingAvatar = 'succeeded';
         state.currentUser = {
-          ...state.currentUser,
+          ...(state.currentUser as User),
           picture: action.payload,
         };
       })
-      .addCase(logIn.fulfilled, (state, action) => {
-        if (window !== undefined) {
-          localStorage.setItem('accessToken', action.payload.accessToken);
-          localStorage.setItem('refreshToken', action.payload.refreshToken);
-        }
-        state.currentUser = action.payload.user;
-        state.isAuthorizing = false;
-        state.isError = false;
+      .addCase(updateMe.pending, (state) => {
+        state.isUpdatingUser = 'pending';
       })
-      .addCase(signUp.fulfilled, (state, action) => {
-        if (window !== undefined) {
-          localStorage.setItem('accessToken', action.payload.accessToken);
-          localStorage.setItem('refreshToken', action.payload.refreshToken);
-        }
-        state.currentUser = action.payload.user;
-        state.isAuthorizing = false;
-        state.isError = false;
+      .addCase(updateMe.fulfilled, (state, action) => {
+        state.isUpdatingUser = 'succeeded';
+        state.currentUser = action.payload;
+      })
+      .addCase(checkEmailExists.fulfilled, (state, action) => {
+        state.emailExists = action.payload;
+      })
+      .addCase(changePassword.pending, (state) => {
+        state.isChangingPassword = 'pending';
+        state.changingPasswordError = '';
+      })
+      .addCase(changePassword.rejected, (state, action) => {
+        state.isChangingPassword = 'failed';
+        state.changingPasswordError =
+          action.error.message || 'Something went wrong';
+      })
+      .addCase(changePassword.fulfilled, (state) => {
+        state.isChangingPassword = 'succeeded';
+        state.changingPasswordError = '';
       });
   },
 });

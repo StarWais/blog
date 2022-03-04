@@ -9,16 +9,21 @@ import {
   InputRightElement,
 } from '@chakra-ui/react';
 import { Fragment } from 'react';
-import { useController, UseControllerProps } from 'react-hook-form';
+import {
+  FieldValues,
+  useController,
+  UseControllerProps,
+} from 'react-hook-form';
 import { useToggle } from '../../../hooks';
 
-interface FormInputProps extends InputProps {
+interface FormInputProps<T extends FieldValues>
+  extends UseControllerProps<T>,
+    Omit<InputProps, 'name' | 'defaultValue'> {
   label: string;
-  name: string;
   type?: 'email' | 'password' | 'text';
 }
 
-const FormInput = ({
+const FormInput = <T extends FieldValues>({
   label,
   type,
   isRequired,
@@ -26,11 +31,11 @@ const FormInput = ({
   isDisabled,
   control,
   ...rest
-}: UseControllerProps<FormInputProps>) => {
+}: FormInputProps<T>) => {
   const {
     field,
     fieldState: { isTouched, error },
-  } = useController({
+  } = useController<T>({
     name,
     control,
   });

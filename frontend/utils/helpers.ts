@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import removeMd from 'remove-markdown';
 import { Picture } from './../types/Picture.d';
 

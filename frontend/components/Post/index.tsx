@@ -7,9 +7,10 @@ export type PostType = 'normal' | 'large' | 'extralarge';
 interface PostProps {
   post: IPost;
   type: PostType;
+  dashboardMode?: boolean;
 }
 
-const Post = ({ post, type }: PostProps) => {
+const Post = ({ post, type, dashboardMode }: PostProps) => {
   return (
     <Flex
       w="full"
@@ -20,8 +21,14 @@ const Post = ({ post, type }: PostProps) => {
       boxShadow="sm"
       borderRadius="md"
     >
-      <PostImage picture={post.picture} postType={type} />
-      <PostContent postType={type} {...post} />
+      <PostImage
+        picture={post.picture}
+        postId={post.id}
+        postType={type}
+        showPublished={dashboardMode}
+        isPublishedPost={post.published}
+      />
+      <PostContent postType={type} post={post} dashboardMode={dashboardMode} />
     </Flex>
   );
 };

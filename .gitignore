@@ -8,5 +8,4 @@
 **/.env.test
 **/.env.production
 **/.vscode
-uploads/
 .DS_Store

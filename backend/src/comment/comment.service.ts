@@ -10,6 +10,7 @@ import {
 import { PrismaService } from './../prisma.service';
 import { Role, User } from './../user/models/user.model';
 import { CreateCommentInput } from './dto/inputs/create-comment.input';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CommentService {
@@ -66,10 +67,15 @@ export class CommentService {
 
   getPostComments(args: GetCommentsArgs) {
     const { postId, ...rest } = args;
-    return Paginate<Comment>(rest, this.prisma, 'comment', {
-      where: { replyTo: null, post: { id: postId, published: true } },
-      orderBy: { createdAt: 'desc' },
-    });
+    return Paginate<Comment, Prisma.CommentFindManyArgs>(
+      rest,
+      this.prisma,
+      'comment',
+      {
+        where: { replyTo: null, post: { id: postId, published: true } },
+        orderBy: { createdAt: 'desc' },
+      },
+    );
   }
 
   getReplies(commentId: number) {

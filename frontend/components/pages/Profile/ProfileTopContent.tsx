@@ -7,7 +7,6 @@ export interface ProfileProps {
 }
 
 const ProfileTopContent = ({ profile }: ProfileProps) => {
-  console.log(profile);
   return (
     <HStack spacing={10}>
       <Avatar

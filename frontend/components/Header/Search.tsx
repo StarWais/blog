@@ -17,7 +17,9 @@ const Search = () => {
 
   const onSubmit = ({ query }: SearchFormData) => {
     const urlEncodedSearchText = encodeURIComponent(query);
-    router.push(`/search?search=${urlEncodedSearchText}`);
+    urlEncodedSearchText === ''
+      ? router.replace('/articles')
+      : router.replace(`/articles?searchText=${urlEncodedSearchText}`);
   };
 
   const { register, handleSubmit } = useForm<SearchFormData>();

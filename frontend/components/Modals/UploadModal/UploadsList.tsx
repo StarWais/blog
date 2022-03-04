@@ -15,7 +15,7 @@ const UploadsList = ({ uploads }: UploadsListProps) => {
       </Center>
     );
   return (
-    <Wrap spacing={4}>
+    <Wrap spacing={3} maxH="lg" overflowY="auto" overflowX="hidden">
       {uploads.map((upload, index) => (
         <Upload
           key={upload instanceof File ? index : upload.id}

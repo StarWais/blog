@@ -36,7 +36,7 @@ const UserFileUploadModal = ({ isOpen, onClose }: UserFileUploadModalProps) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="4xl">
+    <Modal isOpen={isOpen} onClose={onClose} size="4xl" isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Upload file</ModalHeader>

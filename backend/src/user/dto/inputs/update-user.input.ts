@@ -6,6 +6,7 @@ import {
   IsEmail,
   IsNumber,
   IsPositive,
+  MaxLength,
 } from 'class-validator';
 
 @InputType()
@@ -28,8 +29,7 @@ export class UpdateUserInput {
 
   @Field({ description: 'User description', nullable: true })
   @IsOptional()
-  @IsNotEmpty()
-  @Length(5, 255)
+  @MaxLength(255)
   description?: string;
 
   @Field({ description: 'User name', nullable: true })
