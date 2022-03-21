@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   ButtonGroup,
   Modal,
@@ -10,7 +9,6 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useToast,
   VStack,
 } from '@chakra-ui/react';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
@@ -42,7 +40,6 @@ interface CreateEditPostModalProps {
 
 const CreateEditPostModal = ({ isOpen, onClose }: CreateEditPostModalProps) => {
   const dispatch = useAppDispatch();
-  const toast = useToast();
 
   const editablePost = useAppSelector((state) => state.posts.editablePost);
   const handleClose = () => {
@@ -56,11 +53,6 @@ const CreateEditPostModal = ({ isOpen, onClose }: CreateEditPostModalProps) => {
 
   useEffect(() => {
     if (uploadingState === 'succeeded') {
-      toast({
-        status: 'success',
-        title: `Success`,
-        isClosable: true,
-      });
       onClose();
       dispatch(resetLoadingState());
     }

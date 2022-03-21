@@ -4,10 +4,10 @@ import {
   ButtonGroup,
   HStack,
   IconButton,
-  useToast,
   VStack,
 } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+
 import { FaTrashAlt } from 'react-icons/fa';
 import Moment from 'react-moment';
 import { PostType } from '.';
@@ -30,17 +30,8 @@ const PostContent = (props: PostContentProps) => {
   const dispatch = useAppDispatch();
   const deletingPostId = useAppSelector((state) => state.posts.deletingPostId);
   const deletingPostState = useAppSelector((state) => state.posts.deletingPost);
-  const toast = useToast();
 
-  useEffect(() => {
-    if (deletingPostState === 'succeeded') {
-      toast({
-        title: 'Deleted!',
-        status: 'success',
-        isClosable: true,
-      });
-    }
-  }, [deletingPostState]);
+  const router = useRouter();
 
   const getTitleSize = () => {
     if (postType === 'large') {
@@ -84,6 +75,9 @@ const PostContent = (props: PostContentProps) => {
         {dashboardMode ? (
           <ButtonGroup variant="ghost">
             <Button onClick={() => dispatch(setEditblePost(post))}>Edit</Button>
+            <Button onClick={() => router.push(`/articles/${post.slug}`)}>
+              {post.published ? 'View' : 'Preview'}
+            </Button>
             <IconButton
               aria-label="Remove post"
               icon={<FaTrashAlt />}

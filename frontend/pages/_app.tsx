@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 import { wrapper } from '../redux/store';
 import AuthProvider from '../components/Auth/AuthProvider';
 import AuthGuard from '../components/Auth/AuthGuard';
+import Toasts from '../context/Toasts';
 
 type AppProps<P = any> = {
   pageProps: P;
@@ -21,6 +22,7 @@ function MyApp({ Component, pageProps }: AppProps<PageProps>) {
   return (
     <ChakraProvider>
       <AuthProvider>
+        <Toasts />
         <Header />
         <Box as="main" mb={8}>
           {Component.defaultProps?.requiresAuth ? (

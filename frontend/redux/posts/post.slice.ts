@@ -13,6 +13,7 @@ import {
   createPost,
   deletePost,
   getPostBySlug,
+  paginateAllPosts,
   paginateMyPosts,
   paginatePublishedPosts,
   publishPost,
@@ -56,13 +57,25 @@ const initialState: PostsState = {
   deletingPostId: null,
 };
 
-const isLoadingPosts = isPending(paginatePublishedPosts, paginateMyPosts);
+const isLoadingPosts = isPending(
+  paginatePublishedPosts,
+  paginateMyPosts,
+  paginateAllPosts
+);
 const isCreatingUpdatingPost = isPending(createPost, updatePost);
 
-const isFetchedPosts = isFulfilled(paginatePublishedPosts, paginateMyPosts);
+const isFetchedPosts = isFulfilled(
+  paginatePublishedPosts,
+  paginateMyPosts,
+  paginateAllPosts
+);
 const isCreatedUpdatedPost = isFulfilled(createPost, updatePost);
 
-const isRejectedPosts = isRejected(paginatePublishedPosts, paginateMyPosts);
+const isRejectedPosts = isRejected(
+  paginatePublishedPosts,
+  paginateMyPosts,
+  paginateAllPosts
+);
 
 export const postsSlice = createSlice({
   name: 'posts',

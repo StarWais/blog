@@ -86,6 +86,7 @@ export const paginatePublishedPosts = async ({
           id
           slug
           createdAt
+
           content
           picture {
             filePath
@@ -105,6 +106,42 @@ export const paginatePublishedPosts = async ({
   };
   const response = await api.request(query, variables);
   return response.publishedPosts as Paginated<Post>;
+};
+export const paginateAllPosts = async ({
+  page,
+  limit,
+}: GetPublishedPostsArgs) => {
+  const query = gql`
+    query AllPosts($limit: Int, $page: Int!) {
+      allPosts(limit: $limit, page: $page) {
+        nodes {
+          title
+          id
+          slug
+          createdAt
+          published
+          content
+          picture {
+            id
+            filePath
+          }
+          author {
+            name
+          }
+        }
+        pageInfo {
+          currentPage
+          hasNextPage
+        }
+      }
+    }
+  `;
+  const variables = {
+    page,
+    limit,
+  };
+  const response = await api.request(query, variables);
+  return response.allPosts as Paginated<Post>;
 };
 export const paginateMyPosts = async ({ page, limit }: PaginationDetails) => {
   const query = gql`
@@ -147,6 +184,7 @@ export const getPostBySlug = async (slug: string) => {
           name
         }
         content
+        published
         createdAt
         picture {
           filePath

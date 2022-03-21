@@ -27,7 +27,7 @@ interface AuthState {
 
 const initialState: AuthState = {
   currentUser: null,
-  isFetchingUser: false,
+  isFetchingUser: true,
   isAuthorizing: false,
   isUpdatingAvatar: 'idle',
   isAuthError: false,

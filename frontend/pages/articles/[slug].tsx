@@ -31,6 +31,11 @@ const Post: NextPage<PageProps> = () => {
     if (!post) router.push('/404');
   }, [post]);
 
+  useEffect(() => {
+    if (post && !post.published && !router.asPath.includes('?preview=true')) {
+      router.replace(router.asPath + '?preview=true');
+    }
+  }, []);
   if (!post) return null;
 
   return (
@@ -52,7 +57,7 @@ const Post: NextPage<PageProps> = () => {
         <ReactMarkdown components={ChakraUIRenderer()}>
           {post.content}
         </ReactMarkdown>
-        <PostComments post={post} />
+        {post.published && <PostComments post={post} />}
       </Container>
     </>
   );

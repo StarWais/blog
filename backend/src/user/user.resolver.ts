@@ -17,6 +17,7 @@ import { UpdateUserInput } from './dto/inputs/update-user.input';
 import { GetUserArgs } from './dto/args/get-user.args';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { UpdateUserAvatarInput } from './dto/inputs/update-user-avatar.input';
+import { PaginationArgs } from 'src/common/pagination/pagination.args';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -53,6 +54,14 @@ export class UserResolver {
   async getUser(@Args() getUserArgs: GetUserArgs) {
     const user = await this.userService.getUserById(getUserArgs.id);
     return user;
+  }
+
+  @Query(() => [User])
+  @UseGuards(GqlAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  async getAllUsers(@Args() paginationArgs: PaginationArgs) {
+    const users = await this.userService.getAllUsers(paginationArgs);
+    return users;
   }
 
   @Query(() => Boolean)

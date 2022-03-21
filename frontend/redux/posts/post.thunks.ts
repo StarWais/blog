@@ -7,11 +7,16 @@ import {
   updatePost as apiUpdatePost,
   publishPost as apiPublishPost,
   deletePost as apiDeletePost,
+  paginateAllPosts as apiPaginateAllPosts,
 } from '../../api/posts.api';
 
 export const paginatePublishedPosts = createAsyncThunk(
   'posts/paginatePublishedPosts',
   apiPaginatePublishedPosts
+);
+export const paginateAllPosts = createAsyncThunk(
+  'posts/paginateAllPosts',
+  apiPaginateAllPosts
 );
 
 export const paginateMyPosts = createAsyncThunk(

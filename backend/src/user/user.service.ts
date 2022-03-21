@@ -1,3 +1,5 @@
+import { PaginationArgs } from './../common/pagination/pagination.args';
+import { Paginate } from 'src/common/pagination/pagination';
 import { Prisma } from '@prisma/client';
 import {
   ForbiddenException,
@@ -10,6 +12,7 @@ import { PrismaService } from './../prisma.service';
 import { UploadService } from './../upload/upload.service';
 import { UpdateUserInput } from './dto/inputs/update-user.input';
 import { Role, User } from './models/user.model';
+import { User as UserModel } from '@prisma/client';
 import { UpdateUserAvatarInput } from './dto/inputs/update-user-avatar.input';
 
 @Injectable()
@@ -18,6 +21,21 @@ export class UserService {
     private readonly prisma: PrismaService,
     private readonly uploadService: UploadService,
   ) {}
+
+  getAllUsers(paginationArgs: PaginationArgs) {
+    return Paginate<UserModel, Prisma.UserFindManyArgs>(
+      paginationArgs,
+      this.prisma,
+      'user',
+      {
+        orderBy: [
+          {
+            createdAt: 'desc',
+          },
+        ],
+      },
+    );
+  }
 
   async getUserById(id: number) {
     const user = await this.prisma.user.findUnique({

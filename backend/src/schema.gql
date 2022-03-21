@@ -270,6 +270,13 @@ type Query {
     postId: Int!
   ): PaginatedComment!
   emailExists(email: String!): Boolean!
+  getAllUsers(
+    """Current page"""
+    limit: Int = 10
+
+    """Current page"""
+    page: Int!
+  ): [User!]!
   getMe: User!
   getMyUploads: [FileUpload!]!
   getProfile(id: Int!): Profile!
